@@ -4,4 +4,4 @@ project(flowchart_the_fellowship)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(flowchart_the_fellowship
-        main.cpp)
+        main.cpp coursenode.cpp coursenode.h)
