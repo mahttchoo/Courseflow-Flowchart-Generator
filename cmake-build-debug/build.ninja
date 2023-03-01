@@ -57,6 +57,14 @@ build CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj: CXX_COMPILER__flowch
   TARGET_COMPILE_PDB = CMakeFiles\flowchart_the_fellowship.dir\
   TARGET_PDB = flowchart_the_fellowship.pdb
 
+build CMakeFiles/flowchart_the_fellowship.dir/coursenode.cpp.obj: CXX_COMPILER__flowchart_the_fellowship_Debug C$:/development/Algorithms/flowchart-the-fellowship/coursenode.cpp || cmake_object_order_depends_target_flowchart_the_fellowship
+  DEP_FILE = CMakeFiles\flowchart_the_fellowship.dir\coursenode.cpp.obj.d
+  FLAGS = -g
+  OBJECT_DIR = CMakeFiles\flowchart_the_fellowship.dir
+  OBJECT_FILE_DIR = CMakeFiles\flowchart_the_fellowship.dir
+  TARGET_COMPILE_PDB = CMakeFiles\flowchart_the_fellowship.dir\
+  TARGET_PDB = flowchart_the_fellowship.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target flowchart_the_fellowship
@@ -65,7 +73,7 @@ build CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj: CXX_COMPILER__flowch
 #############################################
 # Link the executable flowchart_the_fellowship.exe
 
-build flowchart_the_fellowship.exe: CXX_EXECUTABLE_LINKER__flowchart_the_fellowship_Debug CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj
+build flowchart_the_fellowship.exe: CXX_EXECUTABLE_LINKER__flowchart_the_fellowship_Debug CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj CMakeFiles/flowchart_the_fellowship.dir/coursenode.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\flowchart_the_fellowship.dir

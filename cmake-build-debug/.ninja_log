@@ -1,3 +1,6 @@
 # ninja log v5
 0	344	6992428866651612	CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj	fbe6545b1c7dcbb0
 349	534	6992428868555488	flowchart_the_fellowship.exe	3be3d27296aa6853
+4	380	6993576699619126	CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj	fbe6545b1c7dcbb0
+20	489	6993576700696854	CMakeFiles/flowchart_the_fellowship.dir/coursenode.cpp.obj	2ef13572c2b5487f
+490	737	6993576703150931	flowchart_the_fellowship.exe	8a6d267bff4b308
