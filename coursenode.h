@@ -1,4 +1,3 @@
-
 #include <string>
 #include <vector>
 
@@ -17,7 +16,7 @@ class CourseNode {
     vector<size_t> _quarters;
 
 public:
-    CourseNode(string, string, size_t, vector<string>, vector<size_t>);
+    CourseNode(string code, string name, size_t credits, vector<string> reqs, vector<size_t> quarters);
     string ToString()const;
     string GetCourseCode()const;
     string GetName()const;
