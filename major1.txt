@@ -1,0 +1,7 @@
+CSC 3430, Algorithms Analysis and Design, 4, [MAT 2200, CSC 2431], [2]
+CSC 1230, Problem Solving and Programming, 5, [], [1,2,3]
+CSC 2430, Data Structures I, 5, [CSC 1230], [2,3]
+CSC 2431, Data Structures II, 5, [CSC 2430], [1,3]
+CSC 3150, Systems Design, 5, [CSC 2330, CSC 2431], [1,3]
+CSC 3220, Applications Programming, 4, [CSC 2330, CSC 2430], [2,3]
+MAT 2200, Statistics, 5, [], [1,2,3]

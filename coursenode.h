@@ -11,18 +11,18 @@ using namespace std;
 class CourseNode {
     string _courseCode;
     string _name;
-    size_t _credits;
+    int _credits;
     vector<string> _requirements;
-    vector<size_t> _quarters;
+    vector<int> _quarters;
 
 public:
-    CourseNode(string code, string name, size_t credits, vector<string> reqs, vector<size_t> quarters);
+    CourseNode(string code, string name, int credits, vector<string> reqs, vector<int> quarters);
     string ToString()const;
     string GetCourseCode()const;
     string GetName()const;
-    size_t GetCredits()const;
+    int GetCredits()const;
     vector<string> GetRequirements()const;
-    vector<size_t> GetQuarters()const;
+    vector<int> GetQuarters()const;
 };
 
 

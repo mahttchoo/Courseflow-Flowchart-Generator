@@ -8,7 +8,7 @@ using std::string;
 using std::stringstream;
 
 // Constructor for CourseNode that sets the courseCode, name, credits, requirements, and quarters to the given values.
-CourseNode::CourseNode(string code, string name, size_t credits, vector<string> reqs, vector<size_t> quarters) :
+CourseNode::CourseNode(string code, string name, int credits, vector<string> reqs, vector<int> quarters) :
 _courseCode(code), _name(name), _credits(credits), _requirements(reqs), _quarters(quarters) {
 
 }
@@ -48,7 +48,7 @@ string CourseNode::GetName() const {
 }
 
 // Returns the number of credits
-size_t CourseNode::GetCredits() const {
+int CourseNode::GetCredits() const {
     return _credits;
 }
 
@@ -58,6 +58,6 @@ vector<string> CourseNode::GetRequirements() const {
 }
 
 // Returns the quarters that this course is offered
-vector<size_t> CourseNode::GetQuarters() const {
+vector<int> CourseNode::GetQuarters() const {
     return _quarters;
 }
