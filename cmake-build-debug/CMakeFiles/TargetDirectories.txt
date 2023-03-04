@@ -1,3 +1,3 @@
-C:/development/Algorithms/flowchart-the-fellowship/cmake-build-debug/CMakeFiles/flowchart_the_fellowship.dir
-C:/development/Algorithms/flowchart-the-fellowship/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/development/Algorithms/flowchart-the-fellowship/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Development/GitHub/flowchart-the-fellowship/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Development/GitHub/flowchart-the-fellowship/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Development/GitHub/flowchart-the-fellowship/cmake-build-debug/CMakeFiles/flowchart_the_fellowship.dir

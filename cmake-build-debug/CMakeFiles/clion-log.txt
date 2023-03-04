@@ -1,1 +1,4 @@
-CMakeLists.txt not found in C:\development\Algorithms\flowchart-the-fellowship Select CMakeLists.txt
+/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /mnt/c/Development/GitHub/flowchart-the-fellowship
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /mnt/c/Development/GitHub/flowchart-the-fellowship/cmake-build-debug
