@@ -31,6 +31,7 @@ int main() {
         }
     }
 
+    readFile.close();
 
     // Step through the string and grab one piece at a time comma delimited
 
@@ -51,6 +52,7 @@ CourseNode* createNode(string input) {
     getline(stream, courseCode, ',');
     getline(stream, name, ',');
     getline(stream, creditString, ',');
+    creditString.erase(0,1);
     int credits = stoi(creditString);
     getline(stream, reqs, ']');
     // Now delete the opening bracket '[' amd then traverse through this string, delimited by commas
