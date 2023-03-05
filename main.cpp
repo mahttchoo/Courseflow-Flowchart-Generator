@@ -9,6 +9,22 @@
 //#include <boost/algorithm/string/trim.hpp>
 
 using namespace std;
+using namespace boost;
+
+//#include <GL/gl.h>
+#include <algorithm>
+#include <utility>
+//#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+
+
+struct Vertex {
+    string temp;
+};
+struct Edge {
+    // idk
+};
+
 
 CourseNode* createNode(string input);
 
@@ -23,12 +39,16 @@ int main() {
     // Give an option to select the file later. Might have to use command line parameters
     string line;
     ifstream readFile;
+    // Will change this to open the user selected file
     readFile.open("../major1.txt");
     if (readFile.is_open()) {
         while (!readFile.eof()) {
             getline(readFile, line);
+            // Create the node with the given line that contains a course
             cout << createNode(line)->ToString() << endl;
         }
+    } else {
+        cout << "File could not be opened." << endl;
     }
 
     readFile.close();
@@ -38,6 +58,11 @@ int main() {
     return 0;
 };
 
+/* This function is given a string input and pulls chunks of the string out with  gtline delimiters.
+ * It sends the courseCode, name, credits, requirements, and quarters offered into the CourseNode constructor
+ * to create a new CourseNode object.
+ * Returns a pointer to the CourseNode object that is created
+ */
 CourseNode* createNode(string input) {
     stringstream stream(input);
     string courseCode;
