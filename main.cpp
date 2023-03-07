@@ -3,19 +3,22 @@
 #include <sstream>
 #include <vector>
 #include "coursenode.h"
+
+#include <lemon/list_graph.h>
+
 //#include <boost/algorithm/string.hpp>
 //
 //using namespace boost::algorithm;
 //#include <boost/algorithm/string/trim.hpp>
 
 using namespace std;
-using namespace boost;
+//using namespace boost;
 
 //#include <GL/gl.h>
-#include <algorithm>
-#include <utility>
-//#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
+//#include <algorithm>
+//#include <utility>
+// #include <boost/graph/graph_traits.hpp>
+//#include <boost/graph/adjacency_list.hpp>
 
 
 struct Vertex {
@@ -52,8 +55,15 @@ int main() {
     }
 
     readFile.close();
-
     // Step through the string and grab one piece at a time comma delimited
+
+    // Making the graph
+//    typedef adjacency_list<vecS, vecS, directedS, no_property, no_property> Graph;
+//    Graph g;
+//    unsigned long v1 = add_vertex(g);
+//    unsigned long v2 = add_vertex(g);
+//    cout << "v1: " + v1 << endl;
+//    cout << "v2: " + v2 << endl;
 
     return 0;
 };
@@ -76,6 +86,7 @@ CourseNode* createNode(string input) {
 
     getline(stream, courseCode, ',');
     getline(stream, name, ',');
+    name.erase(0,1);
     getline(stream, creditString, ',');
     creditString.erase(0,1);
     int credits = stoi(creditString);

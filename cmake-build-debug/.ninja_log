@@ -1,7 +1,8 @@
 # ninja log v5
-20	2908	6996178363579066	CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj	fbe6545b1c7dcbb0
-2912	3631	6996178370644057	flowchart_the_fellowship.exe	8a6d267bff4b308
-26	841	6995013110108039	CMakeFiles/flowchart_the_fellowship.dir/coursenode.cpp.obj	2ef13572c2b5487f
-17	603	6996798221480462	CMakeFiles/flowchart_the_fellowship.dir/coursenode.cpp.obj	2ef13572c2b5487f
-5	682	6996798222269267	CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj	fbe6545b1c7dcbb0
-682	925	6996798224637452	flowchart_the_fellowship.exe	8a6d267bff4b308
+9	3209	6998480909689445	CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj	a6319c1f6a65ba65
+6	419	6998516737720766	build.ninja	5f5207a7d695ebf1
+3211	4135	6998480918651768	flowchart_the_fellowship.exe	8a6d267bff4b308
+75	2159	6998480780883830	CMakeFiles/flowchart_the_fellowship.dir/coursenode.cpp.obj	7a021d8eb827f9db
+3	663	6998516797051939	CMakeFiles/flowchart_the_fellowship.dir/coursenode.cpp.obj	118e4d98729add0a
+3	986	6998517008910900	CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj	aeab556af5cb1be4
+987	1347	6998517012528730	flowchart_the_fellowship.exe	8a6d267bff4b308
