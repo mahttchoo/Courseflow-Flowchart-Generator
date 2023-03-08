@@ -5,3 +5,5 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(flowchart_the_fellowship
         main.cpp)
+include_directories(lemon-1.3.1)
+include_directories(lemon-1.3.1/build)
