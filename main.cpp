@@ -4,29 +4,11 @@
 #include <vector>
 #include "coursenode.h"
 
-#include <lemon/list_graph.h>
-
-//#include <boost/algorithm/string.hpp>
-//
-//using namespace boost::algorithm;
-//#include <boost/algorithm/string/trim.hpp>
+//#include <lemon/list_graph.h>
+#include <lemon/smart_graph.h>
 
 using namespace std;
-//using namespace boost;
-
-//#include <GL/gl.h>
-//#include <algorithm>
-//#include <utility>
-// #include <boost/graph/graph_traits.hpp>
-//#include <boost/graph/adjacency_list.hpp>
-
-
-struct Vertex {
-    string temp;
-};
-struct Edge {
-    // idk
-};
+using namespace lemon;
 
 
 CourseNode* createNode(string input);
@@ -37,7 +19,29 @@ int main() {
      * I should use getline to step through the file for one course at a time
      */
     // Example to test CourseNode
-    //string input = "CSC 3430, Algorithms Analysis and Design, 4, [MAT 2200, CSC 2431], [2]";
+//    string input = "CSC 3430, Algorithms Analysis and Design, 4, [MAT 2200, CSC 2431], [2]";
+//    CourseNode* myNode = createNode(input);
+//    cout << myNode->ToString() << endl;
+
+    // Create the graph
+    SmartDigraph graph;
+    SmartDigraph::NodeMap<CourseNode*> data(graph);
+//    SmartDigraph::Node node1 = graph.addNode();
+//    data[node1] = myNode;
+//    cout << "Node1 is in the graph now: " << data[node1]->ToString() << endl;
+
+//    SmartDigraph::NodeMap<CourseNode> u = graph.addNode(myNode);
+//    SmartDigraph::Node u = graph.addNode();
+//    SmartDigraph::Node v = graph.addNode();
+//    SmartDigraph::Arc  a = graph.addArc(u, v);
+//    SmartDigraph::Arc  b = graph.addArc(u, v);
+//    cout << "Hello World! This is LEMON library here." << endl;
+//    cout << "We have a directed graph with " << countNodes(graph) << " nodes "
+//         << "and " << countArcs(graph) << " arc." << endl;
+
+
+
+
 
     // Give an option to select the file later. Might have to use command line parameters
     string line;
@@ -48,22 +52,53 @@ int main() {
         while (!readFile.eof()) {
             getline(readFile, line);
             // Create the node with the given line that contains a course
-            cout << createNode(line)->ToString() << endl;
+            CourseNode* course = createNode(line);
+            //cout << course.ToString() << endl;
+            // Add node to graph here
+            // graph.addNode(course);
+            SmartDigraph::Node n = graph.addNode();
+            data[n] = course;
         }
     } else {
         cout << "File could not be opened." << endl;
     }
-
     readFile.close();
     // Step through the string and grab one piece at a time comma delimited
 
-    // Making the graph
-//    typedef adjacency_list<vecS, vecS, directedS, no_property, no_property> Graph;
-//    Graph g;
-//    unsigned long v1 = add_vertex(g);
-//    unsigned long v2 = add_vertex(g);
-//    cout << "v1: " + v1 << endl;
-//    cout << "v2: " + v2 << endl;
+    // Step through the graph
+    int count = 0;
+    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        count++;
+        // cout << "value for n is: " << graph.id(n) << endl;
+        cout << "value for n is: " << data[n]->ToString() << endl;
+    }
+    std::cout << "Number of nodes: " << count << " and nodeNum is " << graph.nodeNum() << std::endl;
+
+    int arcCount = 0;
+    // Iterate through the graph to add the edges/arcs
+    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        // Traverse through the requirements vector for the current node
+         for (int i = 0; i < data[n]->GetRequirements().size(); i++) {
+             string req = data[n]->GetRequirements()[i];
+             for (SmartDigraph::NodeIt j(graph); j != INVALID; ++j) {
+                 if (data[j]->GetCourseCode() == req) {
+                     // Add the arc if the course code is equal to the current requirement
+                     // The arc should be directed from data[j] to data[n]
+                     cout << "Arc between " << data[j]->ToString() << " and " << data[n]->ToString() << endl;
+                     SmartDigraph::Arc a = graph.addArc(j, n);
+                     arcCount++;
+                 }
+             }
+         }
+    }
+
+    // Now iterate through the arcs to make sure they are all added
+    int cnt = 0;
+    for (SmartDigraph::ArcIt a(graph); a != INVALID; ++a) {
+        cnt++;
+    }
+    cout << "The number of arcs that should have been added is: " << arcCount << endl;
+    cout << "Number of arcs: " << cnt << std::endl;
 
     return 0;
 };
@@ -96,10 +131,14 @@ CourseNode* createNode(string input) {
     // Create a function for this that returns a vector. Can't make a function since the vectors hold different types
     stringstream reqStream(reqs);
     string course;
+    int count = 0;
     while (!reqStream.eof()) {
         getline(reqStream, course, ',');
-        // Remove the space before each course
-//        course.erase(0,1);
+        if (count != 0) {
+            // Remove the space before each course, except for the first course, which has no space before it
+            course.erase(0,1);
+        }
+        count++;
         requirements.push_back(course);
     }
 
