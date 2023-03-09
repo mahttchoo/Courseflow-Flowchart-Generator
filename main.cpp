@@ -14,10 +14,6 @@ using namespace lemon;
 CourseNode* createNode(string input);
 
 int main() {
-    /* Figure out how to read in the courses from the txt file and then store them as nodes in the graph.
-     * I need to work with the file input
-     * I should use getline to step through the file for one course at a time
-     */
     // Example to test CourseNode
 //    string input = "CSC 3430, Algorithms Analysis and Design, 4, [MAT 2200, CSC 2431], [2]";
 //    CourseNode* myNode = createNode(input);
@@ -26,21 +22,6 @@ int main() {
     // Create the graph
     SmartDigraph graph;
     SmartDigraph::NodeMap<CourseNode*> data(graph);
-//    SmartDigraph::Node node1 = graph.addNode();
-//    data[node1] = myNode;
-//    cout << "Node1 is in the graph now: " << data[node1]->ToString() << endl;
-
-//    SmartDigraph::NodeMap<CourseNode> u = graph.addNode(myNode);
-//    SmartDigraph::Node u = graph.addNode();
-//    SmartDigraph::Node v = graph.addNode();
-//    SmartDigraph::Arc  a = graph.addArc(u, v);
-//    SmartDigraph::Arc  b = graph.addArc(u, v);
-//    cout << "Hello World! This is LEMON library here." << endl;
-//    cout << "We have a directed graph with " << countNodes(graph) << " nodes "
-//         << "and " << countArcs(graph) << " arc." << endl;
-
-
-
 
 
     // Give an option to select the file later. Might have to use command line parameters
@@ -53,9 +34,7 @@ int main() {
             getline(readFile, line);
             // Create the node with the given line that contains a course
             CourseNode* course = createNode(line);
-            //cout << course.ToString() << endl;
             // Add node to graph here
-            // graph.addNode(course);
             SmartDigraph::Node n = graph.addNode();
             data[n] = course;
         }
@@ -63,7 +42,6 @@ int main() {
         cout << "File could not be opened." << endl;
     }
     readFile.close();
-    // Step through the string and grab one piece at a time comma delimited
 
     // Step through the graph
     int count = 0;
@@ -99,9 +77,11 @@ int main() {
     }
     cout << "The number of arcs that should have been added is: " << arcCount << endl;
     cout << "Number of arcs: " << cnt << std::endl;
+    cout << "Number of arcs using countArcs: " << countArcs(graph) << endl;
 
     return 0;
 };
+
 
 /* This function is given a string input and pulls chunks of the string out with  gtline delimiters.
  * It sends the courseCode, name, credits, requirements, and quarters offered into the CourseNode constructor
