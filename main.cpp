@@ -45,9 +45,10 @@ int main() {
 
     // Step through the graph
     int count = 0;
+    // data is the NodeMap for graph
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
         count++;
-        // cout << "value for n is: " << graph.id(n) << endl;
+        cout << "id value for n is: " << graph.id(n) << endl;
         cout << "value for n is: " << data[n]->ToString() << endl;
     }
     std::cout << "Number of nodes: " << count << " and nodeNum is " << graph.nodeNum() << std::endl;
