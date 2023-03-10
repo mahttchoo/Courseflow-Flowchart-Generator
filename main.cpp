@@ -4,7 +4,8 @@
  * TODO: Make sure there are no memory leaks.
  * TODO: Make createNode() a constructor within the class and not a function here?
  * TODO: Look into changing the file reader to using a try/catch block and throwing errors if the file isn't opened.
- * TODO: Sort the nodes in the graph so searching for pre-reqs takes O(logn) instead of O(n)
+ * TODO: Sort the nodes in the graph so searching for pre-reqs takes O(logn) instead of O(n).
+ * TODO: Add a check to make sure the maxCredits is above 5 (or maybe we might have 12 minimum).
  */
 
 /*
@@ -26,9 +27,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <set>
 #include "coursenode.h"
-
-//#include <lemon/list_graph.h>
 #include <lemon/smart_graph.h>
 
 using namespace std;
@@ -40,6 +40,10 @@ vector<CourseNode*> mergeSort(vector<CourseNode*> v);
 int main() {
     SmartDigraph graph;
     SmartDigraph::NodeMap<CourseNode*> data(graph);
+
+    set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
+    set<int> finalClasses[4][3];
+
     string line;
     ifstream readFile;
     readFile.open("../major1.txt"); // Will change this to open the user selected file.
@@ -67,13 +71,9 @@ int main() {
     readFile.close();
 
     // Step through the graph
-    int count = 0;
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        count++;
-        // cout << "value for n is: " << graph.id(n) << endl;
-        cout << "value for n is: " << data[n]->ToString() << endl;
+        cout << "Node of id " << graph.id(n) << "         " << data[n]->ToString() << endl;
     }
-    cout << "Number of nodes: " << count << " and nodeNum is " << graph.nodeNum() << endl;
 
     // TODO: This is what causes O(n^2) time complexity, change later for O(nlogn)
     int arcCount = 0;
@@ -86,7 +86,7 @@ int main() {
                  if (data[j]->GetCourseCode() == req) {
                      // Add the arc if the course code is equal to the current requirement
                      // The arc should be directed from data[j] to data[n]
-                     cout << "Arc between " << data[j]->ToString() << " and " << data[n]->ToString() << endl;
+                     cout << "Arc between:\n\t" << data[j]->ToString() << "\n\t" << data[n]->ToString() << endl;
                      SmartDigraph::Arc a = graph.addArc(j, n);
                      arcCount++;
                  }
@@ -99,9 +99,23 @@ int main() {
     for (SmartDigraph::ArcIt a(graph); a != INVALID; ++a) {
         cnt++;
     }
-    cout << "The number of arcs that should have been added is: " << arcCount << endl;
+    cout << "\nThe number of arcs that should have been added is: " << arcCount << endl;
     cout << "Number of arcs: " << cnt << std::endl;
     cout << "Number of arcs using countArcs: " << countArcs(graph) << endl;
+
+    // Asking the user start quarter and maximum number of credits
+    int maxCredits;
+    int startQuarter;
+
+    cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+    cin >> maxCredits;
+    cout << "Please enter the quarter you are starting school" << endl;
+    cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
+    cin >> startQuarter;
+    cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
+    cout << "You are starting in quarter " << startQuarter << "." << endl;
+
+    // Generating a Set of classes the user actually has available.
 
     return 0;
 };
