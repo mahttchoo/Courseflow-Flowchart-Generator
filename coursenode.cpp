@@ -1,4 +1,3 @@
-
 #include "coursenode.h"
 
 #include <string>
