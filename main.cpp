@@ -34,8 +34,9 @@
 using namespace std;
 using namespace lemon;
 
-CourseNode* createNode(string input);
+CourseNode* createNode(string input); // This should porbably be a constructor in the courseNode.cpp file.
 vector<CourseNode*> mergeSort(vector<CourseNode*> v);
+set<int> pickClasses(set<int> s); // Returns optimal set of classes that is under the max credits given a set of classes.
 
 int main() {
     SmartDigraph graph;
@@ -43,6 +44,8 @@ int main() {
 
     set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
     set<int> finalClasses[4][3];
+    cout << availableClasses->size() << endl;
+    int a[5];
 
     string line;
     ifstream readFile;
@@ -104,18 +107,40 @@ int main() {
     cout << "Number of arcs using countArcs: " << countArcs(graph) << endl;
 
     // Asking the user start quarter and maximum number of credits
-    int maxCredits;
-    int startQuarter;
+    int maxCredits = 18;
+    int startQuarter = 1;
 
     cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
-    cin >> maxCredits;
+    //cin >> maxCredits;
     cout << "Please enter the quarter you are starting school" << endl;
     cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
-    cin >> startQuarter;
+    //cin >> startQuarter;
     cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
     cout << "You are starting in quarter " << startQuarter << "." << endl;
 
     // Generating a Set of classes the user actually has available.
+    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        CourseNode* course = data[n];
+        if (course->GetRequirements()[0] == "") { // If number of pre-requirements is zero
+            vector<int> v = course->GetQuarters(); // why this arrow and not .???
+            for (int j = 0; j < v.size(); j++) {
+                availableClasses[v[j] - 1].insert(graph.id(n));
+            }
+        }
+    }
+
+    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
+        cout << "\nClasses that a freshman student can take in quarter " << i + 1 << endl;
+        set<int>::iterator itr;
+
+        // Displaying set elements
+        for (itr = availableClasses[i].begin(); itr != availableClasses[i].end(); itr++) {
+            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
+        }
+    }
+
+    set<int> s = pickClasses(availableClasses[startQuarter]);
+
 
     return 0;
 };
@@ -187,4 +212,8 @@ vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
     //v2 = mergeSort(v2);
 
     // Merging both sides
+}
+
+set<int> pickClasses(set<int> s) {
+
 }
