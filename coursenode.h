@@ -25,5 +25,4 @@ public:
     vector<int> GetQuarters()const;
 };
 
-
 #endif //FLOWCHART_THE_FELLOWSHIP_COURSENODE_H

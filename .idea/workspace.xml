@@ -7,14 +7,31 @@
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DCMAKE_PREFIX_PATH=C:/Development/GitHub/flowchart-the-fellowship/lemon-1.3.1/lemon" ENABLED="true" />
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5b534eb7-8bbc-4ddb-9d83-291d5b70b394" name="Changes" comment="Changes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.22.3/CMakeDetermineCompilerABI_C.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.22.3/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.22.3/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.22.3/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.22.3/CompilerIdC/a.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.22.3/CompilerIdC/a.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.22.3/CompilerIdCXX/a.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.22.3/CompilerIdCXX/a.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/flowchart_the_fellowship.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/flowchart_the_fellowship.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/coursenode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/coursenode.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/coursenode.h" beforeDir="false" afterPath="$PROJECT_DIR$/coursenode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lemon-1.3.1/lemon/assert.h" beforeDir="false" afterPath="$PROJECT_DIR$/lemon-1.3.1/lemon/assert.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lemon-1.3.1/lemon/bits/traits.h" beforeDir="false" afterPath="$PROJECT_DIR$/lemon-1.3.1/lemon/bits/traits.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lemon-1.3.1/lemon/core.h" beforeDir="false" afterPath="$PROJECT_DIR$/lemon-1.3.1/lemon/core.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lemon-1.3.1/lemon/list_graph.h" beforeDir="false" afterPath="$PROJECT_DIR$/lemon-1.3.1/lemon/list_graph.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -25,17 +42,8 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="GitSEFilterConfiguration">
-    <file-type-list>
-      <filtered-out-file-type name="LOCAL_BRANCH" />
-      <filtered-out-file-type name="REMOTE_BRANCH" />
-      <filtered-out-file-type name="TAG" />
-      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
-    </file-type-list>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -52,22 +60,10 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="cf.advertisement.text.has.clang-format" value="true" />
-    <property name="cf.first.check.clang-format" value="false" />
-    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="ObjectiveC" />
-    <property name="last_opened_file_path" value="$USER_HOME$/AppData/Local/Packages/CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc/LocalState/rootfs/usr/include/c++/9/boost" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="CMakeSettings" />
   </component>
-  <component name="RunManager" selected="CMake Application.flowchart_the_fellowship (1)">
+  <component name="RunManager">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="CLION.EXTERNAL.BUILD" enabled="true" />
@@ -78,25 +74,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="flowchart_the_fellowship (1)" type="CMakeRunConfiguration" factoryName="Application" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flowchart_the_fellowship" TARGET_NAME="flowchart_the_fellowship" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="flowchart_the_fellowship" RUN_TARGET_NAME="flowchart_the_fellowship">
+    <configuration name="flowchart_the_fellowship" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flowchart_the_fellowship" TARGET_NAME="flowchart_the_fellowship" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="flowchart_the_fellowship" RUN_TARGET_NAME="flowchart_the_fellowship">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="flowchart_the_fellowship" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="flowchart_the_fellowship" RUN_TARGET_NAME="flowchart_the_fellowship" EXPLICIT_BUILD_TARGET_NAME="all">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="CMake Application.flowchart_the_fellowship" />
-      <item itemvalue="CMake Application.flowchart_the_fellowship (1)" />
-    </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="CMake Application.flowchart_the_fellowship (1)" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -107,19 +89,9 @@
       <option name="presentableId" value="Default" />
       <updated>1677538472847</updated>
       <workItem from="1677538475917" duration="1299000" />
-      <workItem from="1677540564508" duration="4608000" />
-      <workItem from="1677795416834" duration="6246000" />
-      <workItem from="1677802448785" duration="25000" />
-      <workItem from="1677808033803" duration="415000" />
-      <workItem from="1677999157968" duration="3829000" />
-      <workItem from="1678059030902" duration="469000" />
-      <workItem from="1678060767720" duration="624000" />
-      <workItem from="1678061830357" duration="573000" />
-      <workItem from="1678062468915" duration="117000" />
-      <workItem from="1678062696853" duration="1047000" />
-      <workItem from="1678063902234" duration="4552000" />
-      <workItem from="1678076464117" duration="715000" />
-      <workItem from="1678077458712" duration="10351000" />
+      <workItem from="1677795416807" duration="12907000" />
+      <workItem from="1677890750823" duration="6280000" />
+      <workItem from="1678306158858" duration="19191000" />
     </task>
     <servers />
   </component>
@@ -137,9 +109,5 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>
