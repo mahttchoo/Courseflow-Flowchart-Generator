@@ -1,35 +1,54 @@
+/*
+ * TODO: Give an option to select the file later. Might have to use command line parameters.
+ * TODO: Allow user to select which file they want to make a graph of.
+ * TODO: Make sure there are no memory leaks.
+ * TODO: Make createNode() a constructor within the class and not a function here?
+ * TODO: Look into changing the file reader to using a try/catch block and throwing errors if the file isn't opened.
+ * TODO: Sort the nodes in the graph so searching for pre-reqs takes O(logn) instead of O(n).
+ * TODO: Add a check to make sure the maxCredits is above 5 (or maybe we might have 12 minimum).
+ */
+
+/*
+ * ---- There are currently two main approaches to generating the flowchart ----
+ * Approach 1: Generate a vector with all of the CourseNodes, sort the vector, then add each element to our graph
+ *      Benefits: Since the ids will be sorted, finding pre-reqs will be in O(logn) time.
+ *      Downsides: We need O(n) to add into vector, O(nlogn) to sort, and another O(n) to add to graph.
+ *      Conclusion: Would probably be better for a large number of classes, or for a lot of pre-reqs
+ * Approach 2:
+ *      Benefits: Only O(n) to add into graph.
+ *      Downsides: O(n) every time we want to add a pre-req.
+ *      Conclusion: Would probably be better for smaller number of classes, or for fewer pre-reqs.
+ * Final Conclusion:
+ *      Approach 1 seems better, but is a harder to code. We will add it later and will go with approach 2
+ *      for the time being.
+ */
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <set>
 #include "coursenode.h"
-
-//#include <lemon/list_graph.h>
 #include <lemon/smart_graph.h>
 
 using namespace std;
 using namespace lemon;
 
-
 CourseNode* createNode(string input);
+vector<CourseNode*> mergeSort(vector<CourseNode*> v);
 
 int main() {
-    // Example to test CourseNode
-//    string input = "CSC 3430, Algorithms Analysis and Design, 4, [MAT 2200, CSC 2431], [2]";
-//    CourseNode* myNode = createNode(input);
-//    cout << myNode->ToString() << endl;
-
-    // Create the graph
     SmartDigraph graph;
     SmartDigraph::NodeMap<CourseNode*> data(graph);
 
+    set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
+    set<int> finalClasses[4][3];
 
-    // Give an option to select the file later. Might have to use command line parameters
     string line;
     ifstream readFile;
-    // Will change this to open the user selected file
-    readFile.open("../major1.txt");
+    readFile.open("../major1.txt"); // Will change this to open the user selected file.
     if (readFile.is_open()) {
+        // TODO: define vector here
         while (!readFile.eof()) {
             getline(readFile, line);
             // Create the node with the given line that contains a course
@@ -38,21 +57,25 @@ int main() {
             SmartDigraph::Node n = graph.addNode();
             data[n] = course;
         }
+        //TODO:
+        // Use merge sort on vector
+        // Iterate through vector and put course nodes into graph
+        /*for (int i = 0; i < vect.size(); i++) {
+            SmartDigraph::Node n = graph.addNode();
+            data[n] = vect[i];
+        }*/
     } else {
+        // Should we set this to throwing an error using a try/catch block?
         cout << "File could not be opened." << endl;
     }
     readFile.close();
 
     // Step through the graph
-    int count = 0;
-    // data is the NodeMap for graph
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        count++;
-        cout << "id value for n is: " << graph.id(n) << endl;
-        cout << "value for n is: " << data[n]->ToString() << endl;
+        cout << "Node of id " << graph.id(n) << "         " << data[n]->ToString() << endl;
     }
-    std::cout << "Number of nodes: " << count << " and nodeNum is " << graph.nodeNum() << std::endl;
 
+    // TODO: This is what causes O(n^2) time complexity, change later for O(nlogn)
     int arcCount = 0;
     // Iterate through the graph to add the edges/arcs
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
@@ -63,7 +86,7 @@ int main() {
                  if (data[j]->GetCourseCode() == req) {
                      // Add the arc if the course code is equal to the current requirement
                      // The arc should be directed from data[j] to data[n]
-                     cout << "Arc between " << data[j]->ToString() << " and " << data[n]->ToString() << endl;
+                     cout << "Arc between:\n\t" << data[j]->ToString() << "\n\t" << data[n]->ToString() << endl;
                      SmartDigraph::Arc a = graph.addArc(j, n);
                      arcCount++;
                  }
@@ -76,14 +99,26 @@ int main() {
     for (SmartDigraph::ArcIt a(graph); a != INVALID; ++a) {
         cnt++;
     }
-    cout << "The number of arcs that should have been added is: " << arcCount << endl;
+    cout << "\nThe number of arcs that should have been added is: " << arcCount << endl;
     cout << "Number of arcs: " << cnt << std::endl;
     cout << "Number of arcs using countArcs: " << countArcs(graph) << endl;
 
+    // Asking the user start quarter and maximum number of credits
+    int maxCredits;
+    int startQuarter;
+
+    cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+    cin >> maxCredits;
+    cout << "Please enter the quarter you are starting school" << endl;
+    cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
+    cin >> startQuarter;
+    cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
+    cout << "You are starting in quarter " << startQuarter << "." << endl;
+
+    // Generating a Set of classes the user actually has available.
+
     return 0;
 };
-
-
 /* This function is given a string input and pulls chunks of the string out with  gtline delimiters.
  * It sends the courseCode, name, credits, requirements, and quarters offered into the CourseNode constructor
  * to create a new CourseNode object.
@@ -138,4 +173,18 @@ CourseNode* createNode(string input) {
     //cout << node->ToString() << endl;
 
     return node;
+}
+
+vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
+    cout << v.size() << endl;
+    // Base Case
+    if (v.size() == 1) {
+        return v;
+    }
+
+    // Assign v1 = v[0] to v[n/2] and v2 = v[n/2 + 1] to v[n]
+    //v1 = mergeSort(v1);
+    //v2 = mergeSort(v2);
+
+    // Merging both sides
 }

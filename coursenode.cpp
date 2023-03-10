@@ -1,4 +1,3 @@
-
 #include "coursenode.h"
 
 #include <string>
@@ -10,7 +9,6 @@ using std::stringstream;
 // Constructor for CourseNode that sets the courseCode, name, credits, requirements, and quarters to the given values.
 CourseNode::CourseNode(string code, string name, int credits, vector<string> reqs, vector<int> quarters) :
 _courseCode(code), _name(name), _credits(credits), _requirements(reqs), _quarters(quarters) {
-
 }
 
 // Returns a string representation of the courseNode.
