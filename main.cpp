@@ -6,7 +6,8 @@
  * TODO: Look into changing the file reader to using a try/catch block and throwing errors if the file isn't opened.
  * TODO: Sort the nodes in the graph so searching for pre-reqs takes O(logn) instead of O(n).
  * TODO: Add a check to make sure the maxCredits is above 5 (or maybe we might have 12 minimum).
- * TODO: I'm getting "free(): invalid pointer" for some reason but idk why!!!
+ * TODO: Try passing a set by reference into pickClasses, and editing that set as I go through.
+ * TODO: Double check the interval partitioning algorithm and maybe rewrite pickClasses to use it.
  */
 
 /*
@@ -119,10 +120,10 @@ int main() {
     int startQuarter = 1;
 
     cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
-    //cin >> maxCredits;
+    cin >> maxCredits;
     cout << "Please enter the quarter you are starting school" << endl;
     cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
-    //cin >> startQuarter;
+    cin >> startQuarter;
     cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
     cout << "You are starting in quarter " << startQuarter << "." << endl << endl;
 
@@ -157,10 +158,27 @@ int main() {
         cout << data[n]->ToString() << endl << "\tPriority Value: " << data[n]->GetPriority() << endl;
     }
 
-    /*
-    set<int> s = pickClasses(availableClasses[startQuarter], maxCredits);
-    cout << s.size() << endl;
-     */
+    int currentQuarter = startQuarter - 1;
+    while (availableClasses->size() > 0) {
+        currentQuarter = currentQuarter % 3;
+        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits);
+
+        cout << "\nCLASSES TO TAKE DURING QUARTER " << currentQuarter + 1 << ":" << endl;
+        for (auto itr = s.begin(); itr !=s.end(); itr++) {
+            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
+            availableClasses[0].erase(*itr);
+            availableClasses[1].erase(*itr);
+            availableClasses[2].erase(*itr);
+            for (SmartDigraph::OutArcIt a(graph, graph.nodeFromId(*itr)); a != INVALID; ++a) {
+                vector<int> v = data[graph.target(a)]->GetQuarters();
+                for (int j = 0; j < v.size(); j++) {
+                    availableClasses[v[j] - 1].insert(graph.id(graph.target(a)));
+                }
+            }
+        }
+
+        currentQuarter++;
+    }
 
     return 0;
 };
@@ -235,22 +253,25 @@ vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
 }
 
 set<int> pickClasses(set<int> s, int maxCredits) {
-    // STILL WORKING ON THIS FUNCTION
-    /*
     int creditsLeft = maxCredits;
     set<int> retSet;
-    vector<int> v;
     while(true) {
         int bestCourse = -1;
-        for (set<int>::iterator itr = s.begin(); itr != s.end(); itr++) {
-            v.
-            if (data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority() && ) {
-                bestCourse = *itr;
+        set<int>::iterator itr;
+        for (itr = s.begin(); itr != s.end(); itr++) {
+            if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
+                    bestCourse = *itr;
+                }
             }
         }
+        if (bestCourse == -1) {
+            return retSet;
+        }
+        retSet.insert(bestCourse);
+        s.erase(bestCourse);
+        creditsLeft -= data[graph.nodeFromId(bestCourse)]->GetCredits();
     }
-     */
-    return s;
 }
 
 void assignPriority(int id) {
