@@ -44,7 +44,6 @@ using namespace std;
 using namespace lemon;
 
 CourseNode* createNode(string input); // This should porbably be a constructor in the courseNode.cpp file.
-vector<CourseNode*> mergeSort(vector<CourseNode*> v);
 set<int> pickClasses(set<int> s, int maxCredits); // Returns optimal set of classes that is under the max credits given a set of classes.
 void assignPriority(int id);
 
@@ -82,9 +81,9 @@ int main() {
     readFile.close();
 
     // Step through the graph
-    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        cout << "Node of id " << graph.id(n) << "         " << data[n]->ToString() << endl;
-    }
+//    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+//        cout << "Node of id " << graph.id(n) << "         " << data[n]->ToString() << endl;
+//    }
 
     // TODO: This is what causes O(n^2) time complexity, change later for O(nlogn)
     int arcCount = 0;
@@ -97,7 +96,6 @@ int main() {
                  if (data[j]->GetCourseCode() == req) {
                      // Add the arc if the course code is equal to the current requirement
                      // The arc should be directed from data[j] to data[n]
-                     cout << "Arc between:\n\t" << data[j]->ToString() << "\n\t" << data[n]->ToString() << endl;
                      SmartDigraph::Arc a = graph.addArc(j, n);
                      data[j]->AddArc(graph.id(a)); // delete later prolly
                      arcCount++;
@@ -105,15 +103,6 @@ int main() {
              }
          }
     }
-
-    // Now iterate through the arcs to make sure they are all added
-    int cnt = 0;
-    for (SmartDigraph::ArcIt a(graph); a != INVALID; ++a) {
-        cnt++;
-    }
-    cout << "\nThe number of arcs that should have been added is: " << arcCount << endl;
-    cout << "Number of arcs: " << cnt << std::endl;
-    cout << "Number of arcs using countArcs: " << countArcs(graph) << endl;
 
     // Asking the user start quarter and maximum number of credits
     int maxCredits = 18;
@@ -144,28 +133,38 @@ int main() {
         assignPriority(*itr);
     }
 
-    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
-        cout << "\nClasses that a freshman student can take in quarter " << i + 1 << endl;
-        set<int>::iterator itr;
-        // Displaying set elements
-        for (itr = availableClasses[i].begin(); itr != availableClasses[i].end(); itr++) {
-            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
-        }
-    }
+//    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
+//        cout << "\nClasses that a freshman student can take in quarter " << i + 1 << endl;
+//        set<int>::iterator itr;
+//        // Displaying set elements
+//        for (itr = availableClasses[i].begin(); itr != availableClasses[i].end(); itr++) {
+//            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
+//        }
+//    }
 
     cout << "\n\nPrinting out the node priorities:" << endl << endl;
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
         cout << data[n]->ToString() << endl << "\tPriority Value: " << data[n]->GetPriority() << endl;
     }
 
+    // File output to .txt file to be read and used in Javascript to create a display of the classes
+    ofstream outputFile("../output.txt");
+
+    int currYear = 1;
     int currentQuarter = startQuarter - 1;
-    while (availableClasses->size() > 0) {
+    while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
         currentQuarter = currentQuarter % 3;
         set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits);
 
         cout << "\nCLASSES TO TAKE DURING QUARTER " << currentQuarter + 1 << ":" << endl;
+
+        outputFile << "Quarter " << currentQuarter + 1 << endl;
+
         for (auto itr = s.begin(); itr !=s.end(); itr++) {
             cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
+
+            outputFile << data[graph.nodeFromId(*itr)]->ToString() << endl;
+
             availableClasses[0].erase(*itr);
             availableClasses[1].erase(*itr);
             availableClasses[2].erase(*itr);
@@ -178,6 +177,17 @@ int main() {
         }
 
         currentQuarter++;
+        // Each time that the quarter is set to 4, another year has gone by
+        if (currentQuarter == 4) {
+            currYear++;
+            cout << "Year " << currYear << endl;
+        }
+    }
+
+    outputFile.close();
+    // Destructor
+    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        delete data[n];
     }
 
     return 0;
@@ -236,20 +246,6 @@ CourseNode* createNode(string input) {
     //cout << node->ToString() << endl;
 
     return node;
-}
-
-vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
-    cout << v.size() << endl;
-    // Base Case
-    if (v.size() == 1) {
-        return v;
-    }
-
-    // Assign v1 = v[0] to v[n/2] and v2 = v[n/2 + 1] to v[n]
-    //v1 = mergeSort(v1);
-    //v2 = mergeSort(v2);
-
-    // Merging both sides
 }
 
 set<int> pickClasses(set<int> s, int maxCredits) {
