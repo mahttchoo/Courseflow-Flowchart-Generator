@@ -35,6 +35,14 @@ string CourseNode::ToString() const {
     return retVal.str();
 }
 
+void CourseNode::AddArc(int id) {
+    _arcs.push_back(id);
+}
+
+void CourseNode::SetPriority(int i) {
+    _priority = i;
+}
+
 // Returns the course code
 string CourseNode::GetCourseCode() const {
     return _courseCode;
@@ -58,4 +66,12 @@ vector<string> CourseNode::GetRequirements() const {
 // Returns the quarters that this course is offered
 vector<int> CourseNode::GetQuarters() const {
     return _quarters;
+}
+
+vector<int> CourseNode::GetArcs() const {
+    return _arcs;
+}
+
+int CourseNode::GetPriority() const {
+    return _priority;
 }

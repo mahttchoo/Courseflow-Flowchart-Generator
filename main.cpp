@@ -6,11 +6,14 @@
  * TODO: Look into changing the file reader to using a try/catch block and throwing errors if the file isn't opened.
  * TODO: Sort the nodes in the graph so searching for pre-reqs takes O(logn) instead of O(n).
  * TODO: Add a check to make sure the maxCredits is above 5 (or maybe we might have 12 minimum).
+ * TODO: Try passing a set by reference into pickClasses, and editing that set as I go through.
+ * TODO: Double check the interval partitioning algorithm and maybe rewrite pickClasses to use it.
  */
 
 /*
  * ---- There are currently two main approaches to generating the flowchart ----
- * Approach 1: Generate a vector with all of the CourseNodes, sort the vector, then add each element to our graph
+ * Approach 1:
+ *      Generate a vector with all of the CourseNodes, sort the vector, then add each element to our graph
  *      Benefits: Since the ids will be sorted, finding pre-reqs will be in O(logn) time.
  *      Downsides: We need O(n) to add into vector, O(nlogn) to sort, and another O(n) to add to graph.
  *      Conclusion: Would probably be better for a large number of classes, or for a lot of pre-reqs
@@ -21,6 +24,11 @@
  * Final Conclusion:
  *      Approach 1 seems better, but is a harder to code. We will add it later and will go with approach 2
  *      for the time being.
+ *
+ *
+ * ---- Traversing through the graph on our own ----
+ *      I can't find a way to get a list of arcs given a node in lemon. Not sure why. What I can do is when we
+ *      generate the arcs, I can store the id of the arc in the CourseNode class. We can access this with a getter.
  */
 
 #include <iostream>
@@ -30,17 +38,20 @@
 #include <set>
 #include "coursenode.h"
 #include <lemon/smart_graph.h>
+#include <lemon/list_graph.h>
 
 using namespace std;
 using namespace lemon;
 
-CourseNode* createNode(string input);
+CourseNode* createNode(string input); // This should porbably be a constructor in the courseNode.cpp file.
 vector<CourseNode*> mergeSort(vector<CourseNode*> v);
+set<int> pickClasses(set<int> s, int maxCredits); // Returns optimal set of classes that is under the max credits given a set of classes.
+void assignPriority(int id);
+
+SmartDigraph graph;
+SmartDigraph::NodeMap<CourseNode*> data(graph);
 
 int main() {
-    SmartDigraph graph;
-    SmartDigraph::NodeMap<CourseNode*> data(graph);
-
     set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
     set<int> finalClasses[4][3];
 
@@ -88,6 +99,7 @@ int main() {
                      // The arc should be directed from data[j] to data[n]
                      cout << "Arc between:\n\t" << data[j]->ToString() << "\n\t" << data[n]->ToString() << endl;
                      SmartDigraph::Arc a = graph.addArc(j, n);
+                     data[j]->AddArc(graph.id(a)); // delete later prolly
                      arcCount++;
                  }
              }
@@ -104,8 +116,8 @@ int main() {
     cout << "Number of arcs using countArcs: " << countArcs(graph) << endl;
 
     // Asking the user start quarter and maximum number of credits
-    int maxCredits;
-    int startQuarter;
+    int maxCredits = 18;
+    int startQuarter = 1;
 
     cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
     cin >> maxCredits;
@@ -113,9 +125,60 @@ int main() {
     cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
     cin >> startQuarter;
     cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
-    cout << "You are starting in quarter " << startQuarter << "." << endl;
+    cout << "You are starting in quarter " << startQuarter << "." << endl << endl;
 
     // Generating a Set of classes the user actually has available.
+    set<int> rootCourses;
+    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        CourseNode* course = data[n];
+        if (course->GetRequirements()[0] == "") { // If number of pre-requirements is zero
+            rootCourses.insert(graph.id(n));
+            vector<int> v = course->GetQuarters();
+            for (int j = 0; j < v.size(); j++) {
+                availableClasses[v[j] - 1].insert(graph.id(n));
+            }
+        }
+    }
+
+    for (set<int>::iterator itr = rootCourses.begin(); itr != rootCourses.end(); itr++) {
+        assignPriority(*itr);
+    }
+
+    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
+        cout << "\nClasses that a freshman student can take in quarter " << i + 1 << endl;
+        set<int>::iterator itr;
+        // Displaying set elements
+        for (itr = availableClasses[i].begin(); itr != availableClasses[i].end(); itr++) {
+            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
+        }
+    }
+
+    cout << "\n\nPrinting out the node priorities:" << endl << endl;
+    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        cout << data[n]->ToString() << endl << "\tPriority Value: " << data[n]->GetPriority() << endl;
+    }
+
+    int currentQuarter = startQuarter - 1;
+    while (availableClasses->size() > 0) {
+        currentQuarter = currentQuarter % 3;
+        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits);
+
+        cout << "\nCLASSES TO TAKE DURING QUARTER " << currentQuarter + 1 << ":" << endl;
+        for (auto itr = s.begin(); itr !=s.end(); itr++) {
+            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
+            availableClasses[0].erase(*itr);
+            availableClasses[1].erase(*itr);
+            availableClasses[2].erase(*itr);
+            for (SmartDigraph::OutArcIt a(graph, graph.nodeFromId(*itr)); a != INVALID; ++a) {
+                vector<int> v = data[graph.target(a)]->GetQuarters();
+                for (int j = 0; j < v.size(); j++) {
+                    availableClasses[v[j] - 1].insert(graph.id(graph.target(a)));
+                }
+            }
+        }
+
+        currentQuarter++;
+    }
 
     return 0;
 };
@@ -187,4 +250,41 @@ vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
     //v2 = mergeSort(v2);
 
     // Merging both sides
+}
+
+set<int> pickClasses(set<int> s, int maxCredits) {
+    int creditsLeft = maxCredits;
+    set<int> retSet;
+    while(true) {
+        int bestCourse = -1;
+        set<int>::iterator itr;
+        for (itr = s.begin(); itr != s.end(); itr++) {
+            if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
+                    bestCourse = *itr;
+                }
+            }
+        }
+        if (bestCourse == -1) {
+            return retSet;
+        }
+        retSet.insert(bestCourse);
+        s.erase(bestCourse);
+        creditsLeft -= data[graph.nodeFromId(bestCourse)]->GetCredits();
+    }
+}
+
+void assignPriority(int id) {
+    SmartDigraph::Node node = graph.nodeFromId(id);
+    if (data[node]->GetPriority() > -1) {
+        return;
+    }
+    int max = -1;
+    for (SmartDigraph::OutArcIt a(graph, node); a != INVALID; ++a) {
+        assignPriority(graph.id(graph.target(a)));
+        if (data[graph.target(a)]->GetPriority() > max) {
+            max = data[graph.target(a)]->GetPriority();
+        }
+    }
+    data[node]->SetPriority(max + 1);
 }
