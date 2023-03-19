@@ -57,8 +57,23 @@ int main() {
 
     string line;
     ifstream readFile;
-    // use "../major1.txt" in Clion
-    readFile.open("../major2.txt"); // Will change this to open the user selected file.
+
+    string inputFile;
+    bool open = false;
+    cout << "Please enter a .txt file containing the required courses for a major." << endl;
+    while (!readFile.is_open()) {
+        cin >> inputFile;
+        try {
+            // Use "../" + inputFile to run in CLion, and inputFile to run in ubuntu
+            readFile.open(inputFile);
+        } catch (const ifstream::failure& e) {
+            cout << "Please enter a .txt file that is in this folder." << endl;
+        }
+//        open = true;
+    }
+    cout << "Please enter a .txt file containing the required courses for a major." << endl;
+    cin >> inputFile;
+
     if (readFile.is_open()) {
         // TODO: define vector here
         while (!readFile.eof()) {
@@ -82,13 +97,7 @@ int main() {
     }
     readFile.close();
 
-    // Step through the graph
-//    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-//        cout << "Node of id " << graph.id(n) << "         " << data[n]->ToString() << endl;
-//    }
-
     // TODO: This is what causes O(n^2) time complexity, change later for O(nlogn)
-    int arcCount = 0;
     // Iterate through the graph to add the edges/arcs
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
          // Traverse through the requirements vector for the current node
@@ -100,10 +109,8 @@ int main() {
                      // The arc should be directed from data[j] to data[n]
                      SmartDigraph::Arc a = graph.addArc(j, n);
                      data[j]->AddArc(graph.id(a));
-                     arcCount++;
                  }
              }
-
          }
     }
 
@@ -112,6 +119,8 @@ int main() {
     int startQuarter = 0;
     string input;
 
+    // Take the user input as a string, then try to convert it to an integer. If this doesn't work,
+    // tell the user to input an integer. The input must be between 5 and 18 credits
     while (maxCredits < 5 || maxCredits > 18) {
         cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
         cin >> input;
@@ -121,6 +130,8 @@ int main() {
             cout << "Please enter an integer." << endl;
         }
     }
+    // The input must be 1, 2, or 3 for the quarter selection. Anything else won't work, and the user
+    // must try again.
     cout << "Please enter the quarter you are starting school" << endl;
     while (startQuarter < 1 || startQuarter > 3) {
         cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
@@ -131,8 +142,8 @@ int main() {
             cout << "Please enter an integer." << endl;
         }
     }
-    cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
-    cout << "You are starting in quarter " << startQuarter << "." << endl << endl;
+    cout << "\nYou will take no more than " << maxCredits << " classes per quarter and are starting in quarter ";
+    cout << startQuarter << "." << endl << endl;
 
     // Generating a Set of classes the user actually has available.
     set<int> rootCourses;
@@ -151,24 +162,9 @@ int main() {
         assignPriority(*itr, data, graph);
     }
 
-//    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
-//        cout << "\nClasses that a freshman student can take in quarter " << i + 1 << endl;
-//        set<int>::iterator itr;
-//        // Displaying set elements
-//        for (itr = availableClasses[i].begin(); itr != availableClasses[i].end(); itr++) {
-//            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
-//        }
-//    }
-
-    cout << "\n\nPrinting out the node priorities:" << endl << endl;
-    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        cout << data[n]->ToString() << endl << "\tPriority Value: " << data[n]->GetPriority() << endl;
-    }
-
-    // File output to .txt file to be read and used in Javascript to create a display of the classes
+    // File output to .txt file to be read and used in python to create a display of the classes
+    // Use ../output.txt in CLion, and output.txt for ubuntu
     ofstream outputFile("output.txt");
-    // Use this to run in Clion
-//    ofstream outputFile("../output.txt");
 
     int currentYear = 1;
     cout << "Year 1:" << endl;
