@@ -44,7 +44,7 @@ using namespace std;
 using namespace lemon;
 
 CourseNode* createNode(string input); // This should porbably be a constructor in the courseNode.cpp file.
-set<int> pickClasses(set<int> s, int maxCredits); // Returns optimal set of classes that is under the max credits given a set of classes.
+set<int> pickClasses(set<int> s, int maxCredits, int year); // Returns optimal set of classes that is under the max credits given a set of classes.
 void assignPriority(int id);
 
 SmartDigraph graph;
@@ -89,7 +89,7 @@ int main() {
     int arcCount = 0;
     // Iterate through the graph to add the edges/arcs
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        // Traverse through the requirements vector for the current node
+         // Traverse through the requirements vector for the current node
          for (int i = 0; i < data[n]->GetRequirements().size(); i++) {
              string req = data[n]->GetRequirements()[i];
              for (SmartDigraph::NodeIt j(graph); j != INVALID; ++j) {
@@ -97,10 +97,11 @@ int main() {
                      // Add the arc if the course code is equal to the current requirement
                      // The arc should be directed from data[j] to data[n]
                      SmartDigraph::Arc a = graph.addArc(j, n);
-                     data[j]->AddArc(graph.id(a)); // delete later prolly
+                     data[j]->AddArc(graph.id(a));
                      arcCount++;
                  }
              }
+
          }
     }
 
@@ -150,11 +151,18 @@ int main() {
     // File output to .txt file to be read and used in Javascript to create a display of the classes
     ofstream outputFile("../output.txt");
 
-    int currYear = 1;
+    int currentYear = 1;
+    cout << "Year 1:" << endl;
     int currentQuarter = startQuarter - 1;
     while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
+        // Each time that the quarter is 3 (quarters are 0, 1, 2), another year has gone by
+        if (currentQuarter == 3) {
+            currentYear++;
+            cout << endl << "Year " << currentYear << ":" << endl;
+        }
+
         currentQuarter = currentQuarter % 3;
-        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits);
+        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear);
 
         cout << "\nCLASSES TO TAKE DURING QUARTER " << currentQuarter + 1 << ":" << endl;
 
@@ -177,11 +185,6 @@ int main() {
         }
 
         currentQuarter++;
-        // Each time that the quarter is set to 4, another year has gone by
-        if (currentQuarter == 4) {
-            currYear++;
-            cout << "Year " << currYear << endl;
-        }
     }
 
     outputFile.close();
@@ -192,7 +195,8 @@ int main() {
 
     return 0;
 };
-/* This function is given a string input and pulls chunks of the string out with  gtline delimiters.
+
+/* This function is given a string input and pulls chunks of the string out with  getline delimiters.
  * It sends the courseCode, name, credits, requirements, and quarters offered into the CourseNode constructor
  * to create a new CourseNode object.
  * Returns a pointer to the CourseNode object that is created
@@ -248,16 +252,34 @@ CourseNode* createNode(string input) {
     return node;
 }
 
-set<int> pickClasses(set<int> s, int maxCredits) {
+set<int> pickClasses(set<int> s, int maxCredits, int year) {
     int creditsLeft = maxCredits;
     set<int> retSet;
     while(true) {
         int bestCourse = -1;
         set<int>::iterator itr;
         for (itr = s.begin(); itr != s.end(); itr++) {
-            if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
-                if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
-                    bestCourse = *itr;
+            // This stops CSC 3000 and CSC 4941 from being taken before they should be taken
+            if (data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 3000" && data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 4941") {
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                    if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
+                        bestCourse = *itr;
+                    }
+                }
+            } else if (year >= 3 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 3000") {
+                // This makes sure that CSC 3000 is only taken on the 3rd year or after
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                    if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
+                        bestCourse = *itr;
+                    }
+                }
+            } else if (year >= 4 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 4941") {
+                // This makes sure that CSC 4941 is only taken on the 4th year or after
+                if (bestCourse == -1 ||
+                    data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                    if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
+                        bestCourse = *itr;
+                    }
                 }
             }
         }
