@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
-    <generated />
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="flowchart_the_fellowship" targetName="flowchart_the_fellowship" />
+    </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5b534eb7-8bbc-4ddb-9d83-291d5b70b394" name="Changes" comment="Changes">
-      <change afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/input.txt" afterDir="false" />
+    <list default="true" id="5b534eb7-8bbc-4ddb-9d83-291d5b70b394" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/makefile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/script.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/flowchart_the_fellowship.dir/main.cpp.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
+<<<<<<< HEAD
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/flowchart_the_fellowship.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/flowchart_the_fellowship.exe" afterDir="false" />
+=======
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+>>>>>>> Matthew's-Work
+      <change beforePath="$PROJECT_DIR$/major1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/major1.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,14 +36,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="HTML File" />
-        <option value="JavaScript File" />
-      </list>
-    </option>
-  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -48,29 +49,36 @@
     <option name="minorVersion" value="1" />
   </component>
   <component name="ProjectId" id="2MLETmeRfp0E8inQa9bWWLwknak" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "cmake.loaded.for.project": "true",
+    "last_opened_file_path": "C:/development/CSC2431/huffman-mclemmer7",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "CMakeSettings"
+  }
+}]]></component>
+=======
   <component name="PropertiesComponent">
-    <property name="DefaultHtmlFileTemplate" value="HTML File" />
-    <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
+>>>>>>> Matthew's-Work
   <component name="RunManager">
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="flowchart_the_fellowship" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flowchart_the_fellowship" TARGET_NAME="flowchart_the_fellowship" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="flowchart_the_fellowship" RUN_TARGET_NAME="flowchart_the_fellowship">
       <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -85,18 +93,12 @@
       <workItem from="1677538475917" duration="1299000" />
       <workItem from="1677795416807" duration="12907000" />
       <workItem from="1677890750823" duration="6280000" />
-      <workItem from="1678306158858" duration="19191000" />
-      <workItem from="1678673765655" duration="2216000" />
-      <workItem from="1678676819145" duration="666000" />
-      <workItem from="1678841572309" duration="10269000" />
-      <workItem from="1678911294658" duration="994000" />
-      <workItem from="1679023879985" duration="358000" />
-      <workItem from="1679024323886" duration="495000" />
-      <workItem from="1679025041483" duration="169000" />
-      <workItem from="1679025387735" duration="3120000" />
-      <workItem from="1679105122098" duration="496000" />
-      <workItem from="1679166828193" duration="819000" />
-      <workItem from="1679198622951" duration="614000" />
+      <workItem from="1678306158858" duration="20373000" />
+      <workItem from="1678413082374" duration="1771000" />
+      <workItem from="1678470867534" duration="3002000" />
+      <workItem from="1678598864566" duration="753000" />
+      <workItem from="1678604335268" duration="1972000" />
+      <workItem from="1678675646428" duration="1597000" />
     </task>
     <servers />
   </component>
@@ -113,7 +115,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

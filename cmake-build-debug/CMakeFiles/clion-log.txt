@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 Cannot generate into C:\Development\GitHub\flowchart-the-fellowship
 It is already used for project C:\Users\Matth\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\fiskm\Development\GitHub\flowchart-the-fellowship
 
 Please either delete it manually or select another generation directory
+=======
+"C:\Program Files\JetBrains\CLion 2021.2.1\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" -S C:\development\Algorithms\flowchart-the-fellowship -B C:\development\Algorithms\flowchart-the-fellowship\cmake-build-debug
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/development/Algorithms/flowchart-the-fellowship/cmake-build-debug
+>>>>>>> origin/Mark's-Work

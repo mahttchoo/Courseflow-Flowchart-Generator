@@ -46,8 +46,7 @@ using namespace std;
 using namespace lemon;
 
 CourseNode* createNode(string input); // This should porbably be a constructor in the courseNode.cpp file.
-vector<CourseNode*> mergeSort(vector<CourseNode*> v);
-set<int> pickClasses(set<int> s, int maxCredits); // Returns optimal set of classes that is under the max credits given a set of classes.
+set<int> pickClasses(set<int> s, int maxCredits, int year); // Returns optimal set of classes that is under the max credits given a set of classes.
 void assignPriority(int id);
 
 SmartDigraph graph;
@@ -84,48 +83,54 @@ int main() {
     readFile.close();
 
     // Step through the graph
-    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        cout << "Node of id " << graph.id(n) << "         " << data[n]->ToString() << endl;
-    }
+//    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+//        cout << "Node of id " << graph.id(n) << "         " << data[n]->ToString() << endl;
+//    }
 
     // TODO: This is what causes O(n^2) time complexity, change later for O(nlogn)
     int arcCount = 0;
     // Iterate through the graph to add the edges/arcs
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        // Traverse through the requirements vector for the current node
+         // Traverse through the requirements vector for the current node
          for (int i = 0; i < data[n]->GetRequirements().size(); i++) {
              string req = data[n]->GetRequirements()[i];
              for (SmartDigraph::NodeIt j(graph); j != INVALID; ++j) {
                  if (data[j]->GetCourseCode() == req) {
                      // Add the arc if the course code is equal to the current requirement
                      // The arc should be directed from data[j] to data[n]
-                     cout << "Arc between:\n\t" << data[j]->ToString() << "\n\t" << data[n]->ToString() << endl;
                      SmartDigraph::Arc a = graph.addArc(j, n);
-                     data[j]->AddArc(graph.id(a)); // delete later prolly
+                     data[j]->AddArc(graph.id(a));
                      arcCount++;
                  }
              }
+
          }
     }
 
-    // Now iterate through the arcs to make sure they are all added
-    int cnt = 0;
-    for (SmartDigraph::ArcIt a(graph); a != INVALID; ++a) {
-        cnt++;
-    }
-    cout << "\nThe number of arcs that should have been added is: " << arcCount << endl;
-    cout << "Number of arcs: " << cnt << std::endl;
-    cout << "Number of arcs using countArcs: " << countArcs(graph) << endl;
-
     // Asking the user start quarter and maximum number of credits
-    int maxCredits = 18;
-    int startQuarter = 1;
+    int maxCredits = 0;
+    int startQuarter = 0;
+    string input;
 
-    cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
-    cin >> maxCredits;
+    while (maxCredits < 5 || maxCredits > 18) {
+        cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+        cin >> input;
+        try {
+            maxCredits = stoi(input);
+        } catch (exception &err) {
+            cout << "Please enter an integer." << endl;
+        }
+    }
     cout << "Please enter the quarter you are starting school" << endl;
-    cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
-    cin >> startQuarter;
+    while (startQuarter < 1 || startQuarter > 3) {
+        cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
+        cin >> input;
+        try {
+            startQuarter = stoi(input);
+        } catch (exception &err) {
+            cout << "Please enter an integer." << endl;
+        }
+    }
     cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
     cout << "You are starting in quarter " << startQuarter << "." << endl << endl;
 
@@ -146,28 +151,45 @@ int main() {
         assignPriority(*itr);
     }
 
-    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
-        cout << "\nClasses that a freshman student can take in quarter " << i + 1 << endl;
-        set<int>::iterator itr;
-        // Displaying set elements
-        for (itr = availableClasses[i].begin(); itr != availableClasses[i].end(); itr++) {
-            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
-        }
-    }
+//    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
+//        cout << "\nClasses that a freshman student can take in quarter " << i + 1 << endl;
+//        set<int>::iterator itr;
+//        // Displaying set elements
+//        for (itr = availableClasses[i].begin(); itr != availableClasses[i].end(); itr++) {
+//            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
+//        }
+//    }
 
     cout << "\n\nPrinting out the node priorities:" << endl << endl;
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
         cout << data[n]->ToString() << endl << "\tPriority Value: " << data[n]->GetPriority() << endl;
     }
 
+    // File output to .txt file to be read and used in Javascript to create a display of the classes
+    ofstream outputFile("../output.txt");
+
+    int currentYear = 1;
+    cout << "Year 1:" << endl;
     int currentQuarter = startQuarter - 1;
     while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
+        // Each time that the quarter is 3 (quarters are 0, 1, 2), another year has gone by
+        if (currentQuarter == 3) {
+            currentYear++;
+            cout << endl << "Year " << currentYear << ":" << endl;
+        }
+
         currentQuarter = currentQuarter % 3;
-        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits);
+        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear);
 
         cout << "\nCLASSES TO TAKE DURING QUARTER " << currentQuarter + 1 << ":" << endl;
+
+        outputFile << "Quarter " << currentQuarter + 1 << endl;
+
         for (auto itr = s.begin(); itr !=s.end(); itr++) {
             cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
+
+            outputFile << data[graph.nodeFromId(*itr)]->ToString() << endl;
+
             availableClasses[0].erase(*itr);
             availableClasses[1].erase(*itr);
             availableClasses[2].erase(*itr);
@@ -181,9 +203,16 @@ int main() {
         currentQuarter++;
     }
 
+    outputFile.close();
+    // Destructor
+    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        delete data[n];
+    }
+
     return 0;
 };
-/* This function is given a string input and pulls chunks of the string out with  gtline delimiters.
+
+/* This function is given a string input and pulls chunks of the string out with  getline delimiters.
  * It sends the courseCode, name, credits, requirements, and quarters offered into the CourseNode constructor
  * to create a new CourseNode object.
  * Returns a pointer to the CourseNode object that is created
@@ -239,16 +268,34 @@ CourseNode* createNode(string input) {
     return node;
 }
 
-set<int> pickClasses(set<int> s, int maxCredits) {
+set<int> pickClasses(set<int> s, int maxCredits, int year) {
     int creditsLeft = maxCredits;
     set<int> retSet;
     while(true) {
         int bestCourse = -1;
         set<int>::iterator itr;
         for (itr = s.begin(); itr != s.end(); itr++) {
-            if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
-                if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
-                    bestCourse = *itr;
+            // This stops CSC 3000 and CSC 4941 from being taken before they should be taken
+            if (data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 3000" && data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 4941") {
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                    if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
+                        bestCourse = *itr;
+                    }
+                }
+            } else if (year >= 3 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 3000") {
+                // This makes sure that CSC 3000 is only taken on the 3rd year or after
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                    if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
+                        bestCourse = *itr;
+                    }
+                }
+            } else if (year >= 4 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 4941") {
+                // This makes sure that CSC 4941 is only taken on the 4th year or after
+                if (bestCourse == -1 ||
+                    data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                    if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
+                        bestCourse = *itr;
+                    }
                 }
             }
         }

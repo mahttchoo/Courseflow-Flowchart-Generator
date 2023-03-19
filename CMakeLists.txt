@@ -9,5 +9,3 @@ include_directories(./lemon-1.3.1/build)
 
 add_executable(flowchart_the_fellowship
         main.cpp coursenode.h coursenode.cpp)
-include_directories(lemon-1.3.1)
-include_directories(lemon-1.3.1/build)
