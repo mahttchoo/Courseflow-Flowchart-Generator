@@ -43,26 +43,28 @@
 using namespace std;
 using namespace lemon;
 
-CourseNode* createNode(string input); // This should porbably be a constructor in the courseNode.cpp file.
-set<int> pickClasses(set<int> s, int maxCredits, int year); // Returns optimal set of classes that is under the max credits given a set of classes.
-void assignPriority(int id);
-
-SmartDigraph graph;
-SmartDigraph::NodeMap<CourseNode*> data(graph);
+CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // This should porbably be a constructor in the courseNode.cpp file.
+set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // Returns optimal set of classes that is under the max credits given a set of classes.
+void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph);
 
 int main() {
+    SmartDigraph graph;
+    SmartDigraph::NodeMap<CourseNode*> data(graph);
+
+
     set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
     set<int> finalClasses[4][3];
 
     string line;
     ifstream readFile;
-    readFile.open("../major1.txt"); // Will change this to open the user selected file.
+    // use "../major1.txt" in Clion
+    readFile.open("major1.txt"); // Will change this to open the user selected file.
     if (readFile.is_open()) {
         // TODO: define vector here
         while (!readFile.eof()) {
             getline(readFile, line);
             // Create the node with the given line that contains a course
-            CourseNode* course = createNode(line);
+            CourseNode* course = createNode(line, data, graph);
             // Add node to graph here
             SmartDigraph::Node n = graph.addNode();
             data[n] = course;
@@ -146,7 +148,7 @@ int main() {
     }
 
     for (set<int>::iterator itr = rootCourses.begin(); itr != rootCourses.end(); itr++) {
-        assignPriority(*itr);
+        assignPriority(*itr, data, graph);
     }
 
 //    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
@@ -164,7 +166,9 @@ int main() {
     }
 
     // File output to .txt file to be read and used in Javascript to create a display of the classes
-    ofstream outputFile("../output.txt");
+    ofstream outputFile("output.txt");
+    // Use this to run in Clion
+//    ofstream outputFile("../output.txt");
 
     int currentYear = 1;
     cout << "Year 1:" << endl;
@@ -177,7 +181,7 @@ int main() {
         }
 
         currentQuarter = currentQuarter % 3;
-        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear);
+        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear, data, graph);
 
         cout << "\nCLASSES TO TAKE DURING QUARTER " << currentQuarter + 1 << ":" << endl;
 
@@ -216,7 +220,7 @@ int main() {
  * to create a new CourseNode object.
  * Returns a pointer to the CourseNode object that is created
  */
-CourseNode* createNode(string input) {
+CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph) {
     stringstream stream(input);
     string courseCode;
     string name;
@@ -267,7 +271,7 @@ CourseNode* createNode(string input) {
     return node;
 }
 
-set<int> pickClasses(set<int> s, int maxCredits, int year) {
+set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph) {
     int creditsLeft = maxCredits;
     set<int> retSet;
     while(true) {
@@ -307,14 +311,14 @@ set<int> pickClasses(set<int> s, int maxCredits, int year) {
     }
 }
 
-void assignPriority(int id) {
+void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph) {
     SmartDigraph::Node node = graph.nodeFromId(id);
     if (data[node]->GetPriority() > -1) {
         return;
     }
     int max = -1;
     for (SmartDigraph::OutArcIt a(graph, node); a != INVALID; ++a) {
-        assignPriority(graph.id(graph.target(a)));
+        assignPriority(graph.id(graph.target(a)), data, graph);
         if (data[graph.target(a)]->GetPriority() > max) {
             max = data[graph.target(a)]->GetPriority();
         }
