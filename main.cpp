@@ -1,9 +1,6 @@
 /*
- * TODO: Give an option to select the file later. Might have to use command line parameters.
- * TODO: Allow user to select which file they want to make a graph of.
  * TODO: Make sure there are no memory leaks.
  * TODO: Make createNode() a constructor within the class and not a function here?
- * TODO: Look into changing the file reader to using a try/catch block and throwing errors if the file isn't opened.
  * TODO: Sort the nodes in the graph so searching for pre-reqs takes O(logn) instead of O(n).
  * TODO: Add a check to make sure the maxCredits is above 5 (or maybe we might have 12 minimum).
  * TODO: Try passing a set by reference into pickClasses, and editing that set as I go through.
@@ -46,18 +43,16 @@ using namespace lemon;
 CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // This should porbably be a constructor in the courseNode.cpp file.
 set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // Returns optimal set of classes that is under the max credits given a set of classes.
 void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph);
+void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph, set<int> availableClasses[3], int maxCredits, int startQuarter);
 
 int main() {
+    // graph and data are the heart of the graph
     SmartDigraph graph;
     SmartDigraph::NodeMap<CourseNode*> data(graph);
 
-
     set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
-    set<int> finalClasses[4][3];
-
     string line;
     ifstream readFile;
-
     string inputFile;
 
     cout << "major1.txt contains courses for a Computer Science major and major2.txt contains courses"
@@ -70,31 +65,17 @@ int main() {
             readFile.open("../" + inputFile);
         }
     }
-
-    if (readFile.is_open()) {
-        // TODO: define vector here
-        while (!readFile.eof()) {
-            getline(readFile, line);
-            // Create the node with the given line that contains a course
-            CourseNode* course = createNode(line, data, graph);
-            // Add node to graph here
-            SmartDigraph::Node n = graph.addNode();
-            data[n] = course;
-        }
-        //TODO:
-        // Use merge sort on vector
-        // Iterate through vector and put course nodes into graph
-        /*for (int i = 0; i < vect.size(); i++) {
-            SmartDigraph::Node n = graph.addNode();
-            data[n] = vect[i];
-        }*/
-    } else {
-        // Should we set this to throwing an error using a try/catch block?
-        cout << "File could not be opened." << endl;
+    // The file is open now, so get each line and create the CourseNodes
+    while (!readFile.eof()) {
+        getline(readFile, line);
+        // Create the node with the given line that contains a course
+        CourseNode* course = createNode(line, data, graph);
+        // Add node to graph here
+        SmartDigraph::Node n = graph.addNode();
+        data[n] = course;
     }
     readFile.close();
 
-    // TODO: This is what causes O(n^2) time complexity, change later for O(nlogn)
     // Iterate through the graph to add the edges/arcs
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
          // Traverse through the requirements vector for the current node
@@ -155,56 +136,19 @@ int main() {
         }
     }
 
+    // Assign the priority to each of the courses
     for (set<int>::iterator itr = rootCourses.begin(); itr != rootCourses.end(); itr++) {
         assignPriority(*itr, data, graph);
     }
 
-    // File output to .txt file to be read and used in python to create a display of the classes
-    // Use ../output.txt in CLion, and output.txt for ubuntu
-    ofstream outputFile("output.txt");
+    // Now call createOutput, which will write the courses in the correct order into the output.txt file
+    createOutput(data, graph, availableClasses, maxCredits, startQuarter);
+    cout << "output.txt file has been created. Please run the python code to generate the flowchart for these classes." << endl;
 
-    int currentYear = 1;
-    cout << "Year 1:" << endl;
-    int currentQuarter = startQuarter - 1;
-    while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
-        // Each time that the quarter is 3 (quarters are 0, 1, 2), another year has gone by
-        if (currentQuarter == 3) {
-            currentYear++;
-            cout << endl << "Year " << currentYear << ":" << endl;
-        }
-
-        currentQuarter = currentQuarter % 3;
-        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear, data, graph);
-
-        cout << "\nCLASSES TO TAKE DURING QUARTER " << currentQuarter + 1 << ":" << endl;
-
-        outputFile << "Quarter " << currentQuarter + 1 << endl;
-
-        for (auto itr = s.begin(); itr !=s.end(); itr++) {
-            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
-
-            outputFile << data[graph.nodeFromId(*itr)]->ToString() << endl;
-
-            availableClasses[0].erase(*itr);
-            availableClasses[1].erase(*itr);
-            availableClasses[2].erase(*itr);
-            for (SmartDigraph::OutArcIt a(graph, graph.nodeFromId(*itr)); a != INVALID; ++a) {
-                vector<int> v = data[graph.target(a)]->GetQuarters();
-                for (int j = 0; j < v.size(); j++) {
-                    availableClasses[v[j] - 1].insert(graph.id(graph.target(a)));
-                }
-            }
-        }
-
-        currentQuarter++;
-    }
-
-    outputFile.close();
     // Destructor
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
         delete data[n];
     }
-
     return 0;
 };
 
@@ -230,10 +174,12 @@ CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, S
     getline(stream, creditString, ',');
     creditString.erase(0,1);
     int credits = stoi(creditString);
+
+    // Now get the requirements to take this course from the stream input
     getline(stream, reqs, ']');
-    // Now delete the opening bracket '[' amd then traverse through this string, delimited by commas
+    // Now delete the opening bracket '[' and then traverse through this string, delimited by commas
     reqs.erase(0,2);
-    // Create a function for this that returns a vector. Can't make a function since the vectors hold different types
+
     stringstream reqStream(reqs);
     string course;
     int count = 0;
@@ -247,9 +193,9 @@ CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, S
         requirements.push_back(course);
     }
 
+    // Now get the quarters that offer this course from the stream input
     getline(stream, terms, ']');
     terms.erase(0,3);
-    // Create a function for this that returns a vector. Can't make a function since the vectors hold different types
     stringstream termStream(terms);
     string quarter;
     while (!termStream.eof()) {
@@ -257,10 +203,8 @@ CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, S
         int temp = stoi(quarter);
         quarters.push_back(temp);
     }
-
+    // Create the CourseNode and return it
     CourseNode* node = new CourseNode(courseCode, name, credits, requirements, quarters);
-    //cout << node->ToString() << endl;
-
     return node;
 }
 
@@ -322,4 +266,45 @@ void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigra
         }
     }
     data[node]->SetPriority(max + 1);
+}
+
+/* This function creates the output.txt file that contains all of the courses in the order that they
+ * should be taken. This output.txt file will be taken into python and run to create the display of the flowchart.
+ * This function takes in the graph along with the data NodeMap, the available classes set, the max credits per
+ * quarter, and the quarter that the user plans to start taking the classes in.
+ */
+void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph, set<int> availableClasses[3], int maxCredits, int startQuarter) {
+    // File output to .txt file to be read and used in python to create a display of the classes
+    // Use ../output.txt in CLion, and output.txt for ubuntu
+    ofstream outputFile("../output.txt");
+    int currentYear = 1;
+//    cout << "Year 1:" << endl;
+    int currentQuarter = startQuarter - 1;
+    while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
+        // Each time that the quarter is 3 (quarters are 0, 1, 2), another year has gone by
+        if (currentQuarter == 3) {
+            currentYear++;
+        }
+        currentQuarter = currentQuarter % 3;
+        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear, data, graph);
+
+        outputFile << "Quarter " << currentQuarter + 1 << endl;
+
+        for (auto itr = s.begin(); itr !=s.end(); itr++) {
+            outputFile << data[graph.nodeFromId(*itr)]->ToString() << endl;
+
+            availableClasses[0].erase(*itr);
+            availableClasses[1].erase(*itr);
+            availableClasses[2].erase(*itr);
+            for (SmartDigraph::OutArcIt a(graph, graph.nodeFromId(*itr)); a != INVALID; ++a) {
+                vector<int> v = data[graph.target(a)]->GetQuarters();
+                for (int j = 0; j < v.size(); j++) {
+                    availableClasses[v[j] - 1].insert(graph.id(graph.target(a)));
+                }
+            }
+        }
+
+        currentQuarter++;
+    }
+    outputFile.close();
 }
