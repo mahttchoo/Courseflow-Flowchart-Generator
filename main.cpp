@@ -11,6 +11,9 @@
  */
 
 /*
+ * This code works!
+ * g++ -I./lemon-1.3.1 -I./lemon-1.3.1/build main.cpp coursenode.cpp coursenode.h
+ *
  * ---- There are currently two main approaches to generating the flowchart ----
  * Approach 1:
  *      Generate a vector with all of the CourseNodes, sort the vector, then add each element to our graph
@@ -38,7 +41,6 @@
 #include <set>
 #include "coursenode.h"
 #include <lemon/smart_graph.h>
-#include <lemon/list_graph.h>
 
 using namespace std;
 using namespace lemon;
@@ -57,7 +59,7 @@ int main() {
 
     string line;
     ifstream readFile;
-    readFile.open("../major1.txt"); // Will change this to open the user selected file.
+    readFile.open("major1.txt"); // Will change this to open the user selected file.
     if (readFile.is_open()) {
         // TODO: define vector here
         while (!readFile.eof()) {
@@ -159,7 +161,7 @@ int main() {
     }
 
     int currentQuarter = startQuarter - 1;
-    while (availableClasses->size() > 0) {
+    while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
         currentQuarter = currentQuarter % 3;
         set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits);
 
@@ -176,7 +178,6 @@ int main() {
                 }
             }
         }
-
         currentQuarter++;
     }
 
@@ -238,20 +239,6 @@ CourseNode* createNode(string input) {
     return node;
 }
 
-vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
-    cout << v.size() << endl;
-    // Base Case
-    if (v.size() == 1) {
-        return v;
-    }
-
-    // Assign v1 = v[0] to v[n/2] and v2 = v[n/2 + 1] to v[n]
-    //v1 = mergeSort(v1);
-    //v2 = mergeSort(v2);
-
-    // Merging both sides
-}
-
 set<int> pickClasses(set<int> s, int maxCredits) {
     int creditsLeft = maxCredits;
     set<int> retSet;
@@ -265,7 +252,7 @@ set<int> pickClasses(set<int> s, int maxCredits) {
                 }
             }
         }
-        if (bestCourse == -1) {
+        if (bestCourse == -1) { // Only occurs when set is empty because the iterator is never run
             return retSet;
         }
         retSet.insert(bestCourse);
@@ -276,15 +263,30 @@ set<int> pickClasses(set<int> s, int maxCredits) {
 
 void assignPriority(int id) {
     SmartDigraph::Node node = graph.nodeFromId(id);
-    if (data[node]->GetPriority() > -1) {
+    if (data[node]->GetPriority() > -1) { // DYNAMIC PROGRAMMING!!!!
         return;
     }
     int max = -1;
     for (SmartDigraph::OutArcIt a(graph, node); a != INVALID; ++a) {
-        assignPriority(graph.id(graph.target(a)));
-        if (data[graph.target(a)]->GetPriority() > max) {
-            max = data[graph.target(a)]->GetPriority();
+        SmartDigraph::Node target = graph.target(a);
+        assignPriority(graph.id(target)); // Recursive call
+        if (data[target]->GetPriority() > max) {
+            max = data[target]->GetPriority();
         }
     }
     data[node]->SetPriority(max + 1);
+}
+
+vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
+    cout << v.size() << endl;
+    // Base Case
+    if (v.size() == 1) {
+        return v;
+    }
+
+    // Assign v1 = v[0] to v[n/2] and v2 = v[n/2 + 1] to v[n]
+    //v1 = mergeSort(v1);
+    //v2 = mergeSort(v2);
+
+    // Merging both sides
 }
