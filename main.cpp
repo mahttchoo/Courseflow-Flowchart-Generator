@@ -59,20 +59,17 @@ int main() {
     ifstream readFile;
 
     string inputFile;
-    bool open = false;
-    cout << "Please enter a .txt file containing the required courses for a major." << endl;
+
+    cout << "major1.txt contains courses for a Computer Science major and major2.txt contains courses"
+            " for a Biochemistry major." << endl;
     while (!readFile.is_open()) {
+        cout << "Please enter [major1.txt] or [major2.txt] to select your major." << endl;
         cin >> inputFile;
-        try {
+        if (inputFile == "major1.txt" || inputFile == "major2.txt") {
             // Use "../" + inputFile to run in CLion, and inputFile to run in ubuntu
-            readFile.open(inputFile);
-        } catch (const ifstream::failure& e) {
-            cout << "Please enter a .txt file that is in this folder." << endl;
+            readFile.open("../" + inputFile);
         }
-//        open = true;
     }
-    cout << "Please enter a .txt file containing the required courses for a major." << endl;
-    cin >> inputFile;
 
     if (readFile.is_open()) {
         // TODO: define vector here
