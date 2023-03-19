@@ -58,7 +58,7 @@ int main() {
     string line;
     ifstream readFile;
     // use "../major1.txt" in Clion
-    readFile.open("major1.txt"); // Will change this to open the user selected file.
+    readFile.open("../major2.txt"); // Will change this to open the user selected file.
     if (readFile.is_open()) {
         // TODO: define vector here
         while (!readFile.eof()) {
@@ -279,23 +279,28 @@ set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap
         set<int>::iterator itr;
         for (itr = s.begin(); itr != s.end(); itr++) {
             // This stops CSC 3000 and CSC 4941 from being taken before they should be taken
-            if (data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 3000" && data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 4941") {
-                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+            if (data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 3000" &&
+            data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 4941" &&
+            data[graph.nodeFromId(*itr)]->GetCourseCode() != "CHM 4899") {
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() >
+                data[graph.nodeFromId(bestCourse)]->GetPriority()) {
                     if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
                         bestCourse = *itr;
                     }
                 }
             } else if (year >= 3 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 3000") {
                 // This makes sure that CSC 3000 is only taken on the 3rd year or after
-                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() >
+                data[graph.nodeFromId(bestCourse)]->GetPriority()) {
                     if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
                         bestCourse = *itr;
                     }
                 }
-            } else if (year >= 4 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 4941") {
-                // This makes sure that CSC 4941 is only taken on the 4th year or after
-                if (bestCourse == -1 ||
-                    data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+            } else if (year >= 4 && (data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 4941" ||
+            data[graph.nodeFromId(*itr)]->GetCourseCode() == "CHM 4899")) {
+                // This makes sure that CSC 4941 or CHM 4899 is only taken on the 4th year or after
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() >
+                data[graph.nodeFromId(bestCourse)]->GetPriority()) {
                     if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
                         bestCourse = *itr;
                     }
