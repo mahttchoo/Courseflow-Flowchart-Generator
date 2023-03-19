@@ -62,7 +62,7 @@ int main() {
         cin >> inputFile;
         if (inputFile == "major1.txt" || inputFile == "major2.txt") {
             // Use "../" + inputFile to run in CLion, and inputFile to run in ubuntu
-            readFile.open("../" + inputFile);
+            readFile.open(inputFile);
         }
     }
     // The file is open now, so get each line and create the CourseNodes
@@ -97,31 +97,43 @@ int main() {
     int startQuarter = 0;
     string input;
 
-    // Take the user input as a string, then try to convert it to an integer. If this doesn't work,
-    // tell the user to input an integer. The input must be between 5 and 18 credits
-    while (maxCredits < 5 || maxCredits > 18) {
-        cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+    cout << "Would you like to enter the maximum number of credits you would like to take each quarter and"
+            " the quarter that you will start in?" << endl;
+    while (input != "y" && input != "n") {
+        cout << "Please enter [y] for yes or [n] for no." << endl;
         cin >> input;
-        try {
-            maxCredits = stoi(input);
-        } catch (exception &err) {
-            cout << "Please enter an integer." << endl;
-        }
     }
-    // The input must be 1, 2, or 3 for the quarter selection. Anything else won't work, and the user
-    // must try again.
-    cout << "Please enter the quarter you are starting school" << endl;
-    while (startQuarter < 1 || startQuarter > 3) {
-        cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
-        cin >> input;
-        try {
-            startQuarter = stoi(input);
-        } catch (exception &err) {
-            cout << "Please enter an integer." << endl;
+
+    if (input == "y") {
+        // Take the user input as a string, then try to convert it to an integer. If this doesn't work,
+        // tell the user to input an integer. The input must be between 5 and 18 credits
+        while (maxCredits < 5 || maxCredits > 18) {
+            cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+            cin >> input;
+            try {
+                maxCredits = stoi(input);
+            } catch (exception &err) {
+                cout << "Please enter an integer." << endl;
+            }
         }
+        // The input must be 1, 2, or 3 for the quarter selection. Anything else won't work, and the user
+        // must try again.
+        cout << "Please enter the quarter you are starting school" << endl;
+        while (startQuarter < 1 || startQuarter > 3) {
+            cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
+            cin >> input;
+            try {
+                startQuarter = stoi(input);
+            } catch (exception &err) {
+                cout << "Please enter an integer." << endl;
+            }
+        }
+        cout << "\nYou will take no more than " << maxCredits << " classes per quarter and are starting in quarter ";
+        cout << startQuarter << "." << endl << endl;
+    } else if (input == "n") {
+        maxCredits = 18;
+        startQuarter = 1;
     }
-    cout << "\nYou will take no more than " << maxCredits << " classes per quarter and are starting in quarter ";
-    cout << startQuarter << "." << endl << endl;
 
     // Generating a Set of classes the user actually has available.
     set<int> rootCourses;
@@ -276,7 +288,7 @@ void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigra
 void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph, set<int> availableClasses[3], int maxCredits, int startQuarter) {
     // File output to .txt file to be read and used in python to create a display of the classes
     // Use ../output.txt in CLion, and output.txt for ubuntu
-    ofstream outputFile("../output.txt");
+    ofstream outputFile("output.txt");
     int currentYear = 1;
 //    cout << "Year 1:" << endl;
     int currentQuarter = startQuarter - 1;
@@ -288,10 +300,12 @@ void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph,
         currentQuarter = currentQuarter % 3;
         set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear, data, graph);
 
-        outputFile << "Quarter " << currentQuarter + 1 << endl;
+        outputFile << "Quarter " << currentQuarter + 1 << ":" << endl;
 
         for (auto itr = s.begin(); itr !=s.end(); itr++) {
-            outputFile << data[graph.nodeFromId(*itr)]->ToString() << endl;
+            // Just output the courseCodes and credits
+            outputFile << data[graph.nodeFromId(*itr)]->GetCourseCode() << ": " <<
+            data[graph.nodeFromId(*itr)]->GetCredits() << endl;
 
             availableClasses[0].erase(*itr);
             availableClasses[1].erase(*itr);
@@ -306,5 +320,8 @@ void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph,
 
         currentQuarter++;
     }
+
+    // Add the edges to the file
+
     outputFile.close();
 }
