@@ -106,14 +106,29 @@ int main() {
     }
 
     // Asking the user start quarter and maximum number of credits
-    int maxCredits = 18;
-    int startQuarter = 1;
+    int maxCredits = 0;
+    int startQuarter = 0;
+    string input;
 
-    cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
-    cin >> maxCredits;
+    while (maxCredits < 5 || maxCredits > 18) {
+        cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+        cin >> input;
+        try {
+            maxCredits = stoi(input);
+        } catch (exception &err) {
+            cout << "Please enter an integer." << endl;
+        }
+    }
     cout << "Please enter the quarter you are starting school" << endl;
-    cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
-    cin >> startQuarter;
+    while (startQuarter < 1 || startQuarter > 3) {
+        cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
+        cin >> input;
+        try {
+            startQuarter = stoi(input);
+        } catch (exception &err) {
+            cout << "Please enter an integer." << endl;
+        }
+    }
     cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
     cout << "You are starting in quarter " << startQuarter << "." << endl << endl;
 
