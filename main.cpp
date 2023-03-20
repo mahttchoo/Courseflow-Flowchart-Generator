@@ -8,6 +8,9 @@
  */
 
 /*
+ * This code works!
+ * g++ -I./lemon-1.3.1 -I./lemon-1.3.1/build main.cpp coursenode.cpp coursenode.h
+ *
  * ---- There are currently two main approaches to generating the flowchart ----
  * Approach 1:
  *      Generate a vector with all of the CourseNodes, sort the vector, then add each element to our graph
@@ -33,24 +36,50 @@
 #include <sstream>
 #include <vector>
 #include <set>
+#include <cstring>
+#include "picture.h"
 #include "coursenode.h"
 #include <lemon/smart_graph.h>
-#include <lemon/list_graph.h>
 
 using namespace std;
 using namespace lemon;
 
-CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // This should porbably be a constructor in the courseNode.cpp file.
+CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // This should probably be a constructor in the courseNode.cpp file.
 set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // Returns optimal set of classes that is under the max credits given a set of classes.
 void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph);
 void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph, set<int> availableClasses[3], int maxCredits, int startQuarter);
 
+void box(int x, int y, int width, int height, int rgb[3]);
+void line(int start_x, int start_y, int end_x, int end_y, int width, int rgb[3]);
+void letter(int x, int y, char letter, int rgb[3]);
+void word(int x, int y, string s, int rgb[3]);
+
+const int width = 1100, height = 450;
+int arr[width][height][3];
+
 int main() {
+    /*
+    int rgb[3] = {255,0,0};
+    Picture* pic = new Picture(512,255,rgb);
+    int rgb2[3] = {255,255,255};
+    //pic->placeBox(30,10,100,20,rgb2);
+    pic->createPPM("pic.ppm");
+     */
+
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            arr[i][j][0] = 200;
+            arr[i][j][1] = 200;
+            arr[i][j][2] = 200;
+        }
+    }
+
+    set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
+    set<int> finalClasses[4][3];
     // graph and data are the heart of the graph
     SmartDigraph graph;
     SmartDigraph::NodeMap<CourseNode*> data(graph);
 
-    set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
     string line;
     ifstream readFile;
     string inputFile;
@@ -148,7 +177,7 @@ int main() {
         }
     }
 
-    // Assign the priority to each of the courses
+    // Driver function for assignPriority(), since assignPriority() is a DFS recursive function.
     for (set<int>::iterator itr = rootCourses.begin(); itr != rootCourses.end(); itr++) {
         assignPriority(*itr, data, graph);
     }
@@ -161,6 +190,23 @@ int main() {
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
         delete data[n];
     }
+
+    ofstream img ("picture.ppm");
+    img << "P3" << endl;
+    img << width << " " << height << endl;
+    img << "255" << endl;
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int r = arr[x][y][0];
+            int g = arr[x][y][1];
+            int b = arr[x][y][2];
+
+            img << r << " " << g << " " << b << endl;
+        }
+    }
+    img.close();
+
     return 0;
 };
 
@@ -220,11 +266,14 @@ CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, S
     return node;
 }
 
+// Greedy algorithm that picks the classes based on their order of priority.
 set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph) {
     int creditsLeft = maxCredits;
-    set<int> retSet;
+    set<int> retSet; // Return Set
     while(true) {
         int bestCourse = -1;
+
+        // Iterate through every class in the set of available classes, test if they are under the current creditsLeft, and then set its ID as bestCourse if it has the highest priority so far
         set<int>::iterator itr;
         for (itr = s.begin(); itr != s.end(); itr++) {
             // This stops CSC 3000 and CSC 4941 from being taken before they should be taken
@@ -234,7 +283,7 @@ set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap
                 if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() >
                 data[graph.nodeFromId(bestCourse)]->GetPriority()) {
                     if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
-                        bestCourse = *itr;
+                        bestCourse = *itr; // Setting bestCourse as class ID with the highest priority out of possible classes searched.
                     }
                 }
             } else if (year >= 3 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 3000") {
@@ -256,7 +305,7 @@ set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap
                 }
             }
         }
-        if (bestCourse == -1) {
+        if (bestCourse == -1) { // Only occurs when the iterator loops through all classes and it can't take any more classes.
             return retSet;
         }
         retSet.insert(bestCourse);
@@ -265,21 +314,414 @@ set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap
     }
 }
 
+// Recursive DFS that counts the priority of each node as it traverses back up the graph.
 void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph) {
     SmartDigraph::Node node = graph.nodeFromId(id);
-    if (data[node]->GetPriority() > -1) {
+
+    // If the node's priority was already set using a previous call of assignPriority() on a different root node, don't traverse that path of classes again.
+    // This works because -1 is the default priority of a class, it means it's priority hasn't been generated yet.
+    if (data[node]->GetPriority() > -1) { // DYNAMIC PROGRAMMING!!!!
         return;
     }
+
+    // Call assignPriority() on every child node.
     int max = -1;
     for (SmartDigraph::OutArcIt a(graph, node); a != INVALID; ++a) {
         assignPriority(graph.id(graph.target(a)), data, graph);
+        
+        // Picking the child node with the greatest priority, and basing the priority of the node entered off of that one.
         if (data[graph.target(a)]->GetPriority() > max) {
             max = data[graph.target(a)]->GetPriority();
         }
     }
+
+    // for loop is skipped if there are no children, since max is set to -1, priority is set to 0. This is the base case.
     data[node]->SetPriority(max + 1);
 }
 
+// Currently un-used
+vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
+    cout << v.size() << endl;
+    // Base Case
+    if (v.size() == 1) {
+        return v;
+    }
+
+    // Assign v1 = v[0] to v[n/2] and v2 = v[n/2 + 1] to v[n]
+    //v1 = mergeSort(v1);
+    //v2 = mergeSort(v2);
+
+    // Merging both sides
+}
+
+void box(int x, int y, int width, int height, int rgb[3]) {
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            arr[x + i][y + j][0] = rgb[0];
+            arr[x + i][y + j][1] = rgb[1];
+            arr[x + i][y + j][2] = rgb[2];
+        }
+    }
+}
+
+void line(int start_x, int start_y, int end_x, int end_y, int width, int rgb[3]) {
+    int sy = start_y;
+    cout << "line() was called" << endl;
+    int y_segments = (end_y - start_y) / (end_x - start_x);
+    int x_segments = (end_x - start_x) / (end_y - start_y);
+    y_segments++;
+    x_segments++;
+    cout << "segments: " << y_segments << endl;
+
+    for (int x = start_x; x < end_x; x++) {
+        if (x % x_segments == 0) {
+            sy++;
+        }
+        for (int y = sy; y < y_segments + sy; y++) {
+            arr[x][y][0] = rgb[0];
+            arr[x][y][1] = rgb[1];
+            arr[x][y][2] = rgb[2];
+        }
+        sy += y_segments - 1;
+    }
+    arr[start_x][start_y][0] = 0;
+    arr[start_x][start_y][1] = 0;
+    arr[start_x][start_y][2] = 0;
+    arr[end_x][end_y][0] = 0;
+    arr[end_x][end_y][1] = 0;
+    arr[end_x][end_y][2] = 0;
+}
+
+void word(int x, int y, string s, int rgb[3]){
+    for (int i = 0; i < s.size(); i++) {
+        letter(x + (i * 4),y,s.at(i),rgb);
+    }
+}
+
+void letter(int x, int y, char letter, int rgb[3]) {
+    int letArr[5][3];
+    switch (int(letter)) {
+        case 32: // Space
+        {
+            int a[5][3] = {0, 0, 0,
+                           0, 0, 0,
+                           0, 0, 0,
+                           0, 0, 0,
+                           0, 0, 0};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 48: // Number 0
+        {
+            int a[5][3] = {0, 1, 0,
+                           1, 0, 1,
+                           1, 1, 1,
+                           1, 0, 1,
+                           0, 1, 0};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 49: // Number 1
+        {
+            int a[5][3] = {0, 1, 0,
+                           1, 1, 0,
+                           0, 1, 0,
+                           0, 1, 0,
+                           1, 1, 1};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 50: // Number 2
+        {
+            int a[5][3] = {0, 1, 0,
+                           1, 0, 1,
+                           0, 0, 1,
+                           1, 1, 0,
+                           1, 1, 1};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 51: // Number 3
+        {
+            int a[5][3] = {1, 1, 0,
+                           0, 0, 1,
+                           1, 1, 0,
+                           0, 0, 1,
+                           1, 1, 0};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 52: // Number 4
+        {
+            int a[5][3] = {1, 0, 1,
+                           1, 0, 1,
+                           1, 1, 1,
+                           0, 0, 1,
+                           0, 0, 1};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 53: // Number 5
+        {
+            int a[5][3] = {1, 1, 1,
+                           1, 0, 0,
+                           1, 1, 0,
+                           0, 0, 1,
+                           1, 1, 1};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 54: // Number 6
+        {
+            int a[5][3] = {0, 1, 1,
+                           1, 0, 0,
+                           1, 1, 0,
+                           1, 0, 1,
+                           1, 1, 1};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 55: // Number 7
+        {
+            int a[5][3] = {1, 1, 1,
+                           0, 0, 1,
+                           0, 1, 0,
+                           0, 1, 0,
+                           0, 1, 0};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 56: // Number 8
+        {
+            int a[5][3] = {0, 1, 0,
+                           1, 0, 1,
+                           0, 1, 0,
+                           1, 0, 1,
+                           0, 1, 0};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 57: // Number 9
+        {
+            int a[5][3] = {0, 1, 1,
+                           1, 0, 1,
+                           0, 1, 1,
+                           0, 0, 1,
+                           1, 1, 0};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 65: // Letter A
+        {
+            int a[5][3] = {0, 1, 0,
+                           1, 0, 1,
+                           1, 1, 1,
+                           1, 0, 1,
+                           1, 0, 1};
+            memcpy(letArr, a, sizeof(letArr));
+            break;
+        }
+        case 66: // Letter B
+        {
+            int b[5][3] = {1, 1, 0,
+                           1, 0, 1,
+                           1, 1, 0,
+                           1, 0, 1,
+                           1, 1, 0};
+            memcpy(letArr, b, sizeof(letArr));
+            break;
+        }
+        case 67: // Letter C
+        {
+            int c[5][3] = {1, 1, 1,
+                           1, 0, 0,
+                           1, 0, 0,
+                           1, 0, 0,
+                           1, 1, 1};
+            memcpy(letArr, c, sizeof(letArr));
+            break;
+        }
+        case 68: // Letter D
+        {
+            int d[5][3] = {1, 1, 0,
+                           1, 0, 1,
+                           1, 0, 1,
+                           1, 0, 1,
+                           1, 1, 0};
+            memcpy(letArr, d, sizeof(letArr));
+            break;
+        }
+        case 69: // Letter E
+        {
+            int e[5][3] = {1, 1, 1,
+                           1, 0, 0,
+                           1, 1, 1,
+                           1, 0, 0,
+                           1, 1, 1};
+            memcpy(letArr, e, sizeof(letArr));
+            break;
+        }
+        case 70: // Letter F
+        {
+            int f[5][3] = {1, 1, 1,
+                           1, 0, 0,
+                           1, 1, 1,
+                           1, 0, 0,
+                           1, 0, 0};
+            memcpy(letArr, f, sizeof(letArr));
+            break;
+        }
+        case 71: // Letter G
+        {
+            int g[5][3] = {1, 1, 1,
+                           1, 0, 0,
+                           1, 0, 1,
+                           1, 0, 1,
+                           1, 1, 1};
+            memcpy(letArr, g, sizeof(letArr));
+            break;
+        }
+        case 72: // Letter H
+        {
+            int g[5][3] = {1, 0, 1,
+                           1, 0, 1,
+                           1, 1, 1,
+                           1, 0, 1,
+                           1, 0, 1};
+            memcpy(letArr, g, sizeof(letArr));
+            break;
+        }
+        case 73: // Letter I
+        {
+            int i[5][3] = {1, 1, 1,
+                           0, 1, 0,
+                           0, 1, 0,
+                           0, 1, 0,
+                           1, 1, 1};
+            memcpy(letArr, i, sizeof(letArr));
+            break;
+        }
+        case 76: // Letter L
+        {
+            int i[5][3] = {1, 0, 0,
+                           1, 0, 0,
+                           1, 0, 0,
+                           1, 0, 0,
+                           1, 1, 1};
+            memcpy(letArr, i, sizeof(letArr));
+            break;
+        }
+        case 77: // Letter M
+        {
+            int m[5][3] = {1, 0, 1,
+                           1, 1, 1,
+                           1, 1, 1,
+                           1, 0, 1,
+                           1, 0, 1};
+            memcpy(letArr, m, sizeof(letArr));
+            break;
+        }
+        case 78: // Letter N
+        {
+            int n[5][3] = {1, 0, 1,
+                           1, 1, 1,
+                           1, 1, 1,
+                           1, 1, 1,
+                           1, 0, 1};
+            memcpy(letArr, n, sizeof(letArr));
+            break;
+        }
+        case 79: // Letter O
+        {
+            int o[5][3] = {1, 1, 1,
+                           1, 0, 1,
+                           1, 0, 1,
+                           1, 0, 1,
+                           1, 1, 1};
+            memcpy(letArr, o, sizeof(letArr));
+            break;
+        }
+        case 80: // Letter P
+        {
+            int p[5][3] = {1, 1, 0,
+                           1, 0, 1,
+                           1, 1, 0,
+                           1, 0, 0,
+                           1, 0, 0};
+            memcpy(letArr, p, sizeof(letArr));
+            break;
+        }
+        case 82: // Letter R
+        {
+            int r[5][3] = {1, 1, 0,
+                           1, 0, 1,
+                           1, 1, 0,
+                           1, 0, 1,
+                           1, 0, 1};
+            memcpy(letArr, r, sizeof(letArr));
+            break;
+        }
+        case 83: // Letter S
+        {
+            int s[5][3] = {1, 1, 1,
+                           1, 0, 0,
+                           1, 1, 1,
+                           0, 0, 1,
+                           1, 1, 1};
+            memcpy(letArr, s, sizeof(letArr));
+            break;
+        }
+        case 84: // Letter T
+        {
+            int t[5][3] = {1, 1, 1,
+                           0, 1, 0,
+                           0, 1, 0,
+                           0, 1, 0,
+                           0, 1, 0};
+            memcpy(letArr, t, sizeof(letArr));
+            break;
+        }
+        case 85: // Letter U
+        {
+            int u[5][3] = {1, 0, 1,
+                           1, 0, 1,
+                           1, 0, 1,
+                           1, 0, 1,
+                           1, 1, 1};
+            memcpy(letArr, u, sizeof(letArr));
+        }
+            break;
+        case 87: // Letter W
+        {
+            int w[5][3] = {1, 0, 1,
+                           1, 0, 1,
+                           1, 1, 1,
+                           1, 1, 1,
+                           1, 0, 1};
+            memcpy(letArr, w, sizeof(letArr));
+            break;
+        }
+        case 89: // Letter Y
+        {
+            int y[5][3] = {1, 0, 1,
+                           1, 0, 1,
+                           0, 1, 0,
+                           0, 1, 0,
+                           0, 1, 0};
+            memcpy(letArr, y, sizeof(letArr));
+            break;
+        }
+    }
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 5; j++) {
+            if (letArr[j][i] == 1) {
+                arr[x + i][y + j][0] = rgb[0];
+                arr[x + i][y + j][1] = rgb[1];
+                arr[x + i][y + j][2] = rgb[2];
+            }
+        }
+    }
+}
 /* This function creates the output.txt file that contains all of the courses in the order that they
  * should be taken. This output.txt file will be taken into python and run to create the display of the flowchart.
  * This function takes in the graph along with the data NodeMap, the available classes set, the max credits per
@@ -302,10 +744,21 @@ void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph,
 
         outputFile << "Quarter " << currentQuarter + 1 << ":" << endl;
 
+        int c = -1;
         for (auto itr = s.begin(); itr !=s.end(); itr++) {
+            c++;
             // Just output the courseCodes and credits
             outputFile << data[graph.nodeFromId(*itr)]->GetCourseCode() << ": " <<
             data[graph.nodeFromId(*itr)]->GetCredits() << endl;
+
+            int rgb[3] = {100,100,100};
+            box(((currentYear - 1) * 190) + (currentQuarter * 60) + 10 + ((startQuarter - 1) * -50),(c * 71) + 10,40,15,rgb);
+
+            int rgb2[3] = {255,255,100};
+            string code = data[graph.nodeFromId(*itr)]->GetCourseCode();
+            char credits = char(data[graph.nodeFromId(*itr)]->GetCredits() + 48);
+            word(((currentYear - 1) * 190) + (currentQuarter * 60) + 13 + ((startQuarter - 1) * -50),(c * 71) + 12,code,rgb2);
+            letter(((currentYear - 1) * 190) + (currentQuarter * 60) + 13 + ((startQuarter - 1) * -50),(c * 71) + 18,credits,rgb2);
 
             availableClasses[0].erase(*itr);
             availableClasses[1].erase(*itr);
