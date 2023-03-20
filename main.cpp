@@ -126,8 +126,7 @@ int main() {
     int startQuarter = 0;
     string input;
 
-    cout << "Would you like to enter the maximum number of credits you would like to take each quarter and"
-            " the quarter that you will start in?" << endl;
+    cout << "Would you like to enter constraints for the maximum credits and starting quarter?" << endl;
     while (input != "y" && input != "n") {
         cout << "Please enter [y] for yes or [n] for no." << endl;
         cin >> input;
@@ -135,8 +134,8 @@ int main() {
 
     if (input == "y") {
         // Take the user input as a string, then try to convert it to an integer. If this doesn't work,
-        // tell the user to input an integer. The input must be between 5 and 18 credits
-        while (maxCredits < 5 || maxCredits > 18) {
+        // tell the user to input an integer. The input must be between 12 and 18 credits
+        while (maxCredits < 12 || maxCredits > 18) {
             cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
             cin >> input;
             try {
@@ -157,10 +156,10 @@ int main() {
                 cout << "Please enter an integer." << endl;
             }
         }
-        cout << "\nYou will take no more than " << maxCredits << " classes per quarter and are starting in quarter ";
+        cout << "\nYou will take no more than " << maxCredits << " credits per quarter and are starting in quarter ";
         cout << startQuarter << "." << endl << endl;
     } else if (input == "n") {
-        maxCredits = 18;
+        maxCredits = 100;
         startQuarter = 1;
     }
 
@@ -337,21 +336,6 @@ void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigra
 
     // for loop is skipped if there are no children, since max is set to -1, priority is set to 0. This is the base case.
     data[node]->SetPriority(max + 1);
-}
-
-// Currently un-used
-vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
-    cout << v.size() << endl;
-    // Base Case
-    if (v.size() == 1) {
-        return v;
-    }
-
-    // Assign v1 = v[0] to v[n/2] and v2 = v[n/2 + 1] to v[n]
-    //v1 = mergeSort(v1);
-    //v2 = mergeSort(v2);
-
-    // Merging both sides
 }
 
 void box(int x, int y, int width, int height, int rgb[3]) {
@@ -744,12 +728,8 @@ void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph,
 
         outputFile << "Quarter " << currentQuarter + 1 << ":" << endl;
 
-        int c = -1;
         for (auto itr = s.begin(); itr !=s.end(); itr++) {
-            c++;
-            // Just output the courseCodes and credits
-            outputFile << data[graph.nodeFromId(*itr)]->GetCourseCode() << ": " <<
-            data[graph.nodeFromId(*itr)]->GetCredits() << endl;
+            outputFile << data[graph.nodeFromId(*itr)]->ToString() << endl;
 
             int rgb[3] = {100,100,100};
             box(((currentYear - 1) * 190) + (currentQuarter * 60) + 10 + ((startQuarter - 1) * -50),(c * 71) + 10,40,15,rgb);
