@@ -8,7 +8,8 @@ This project was created in C++ with mingw and uses the Lemon library to make a 
 
 ## Requirements
 - CMake VERSION 3.16.3 was used to create this project
-- The Lemon library included above is needed.
+- The GNU C++ Compiler is required to run the code through Ubuntu Linux 
+- The Lemon library included above is needed for the graph
 - A ppm file viewer is needed to view the flowchart output. A ppm viewer can be downloaded or the online ppm viewer from this website can be used https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html
 
 ## User Manual
@@ -17,6 +18,11 @@ Download the project from this repository. The Lemon library is included in this
 ### Running the Program in Ubuntu:
 1) g++ -o flowchart -I./lemon-1.3.1 -I./lemon-1.3.1/build main.cpp coursenode.cpp coursenode.h
 2) ./flowchart
+3) Follow the given instructions and input major1.txt or major2.txt.
+4) Type "y" to enter constraints or "n" to have no constraints. If "y" was selected, enter the maximum credits per quarter and the quarter when you would like to start school.
+Running the project should look like this:
+![image](https://user-images.githubusercontent.com/94164990/226270211-c14c3b6e-0957-47ea-be09-73f85dac6ccc.png)
+
 
 ### Viewing the Results:
 - Navigate into the folder where this project is located
@@ -24,7 +30,7 @@ Download the project from this repository. The Lemon library is included in this
 ![image](https://user-images.githubusercontent.com/94164990/226266583-35ca4be2-82e8-44f1-9fad-9184ca807e50.png)
 
 - Just like with the output.txt file, the results for the flowchart files that are created will change depending on if there are constraints. Each time the project is run, it will create a flowchart with edges (edges_picture.ppm) and a flowchart without edges (no_edges_picture.ppm) since the edges can cross over the courses and make it hard to read.
-- Please open this ppm viewer (https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) and then select the no_edges_picture.ppm or edges_picture.ppm file.
+- Please open this ppm viewer (https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) and then select the no_edges_picture.ppm or edges_picture.ppm file to view it.
 ![image](https://user-images.githubusercontent.com/94164990/226267737-f931db2f-7bdb-4845-8a53-0cddae4bcf05.png)
 ![image](https://user-images.githubusercontent.com/94164990/226267829-e38245f8-586e-46b6-a1dd-d724316fd025.png)
 
