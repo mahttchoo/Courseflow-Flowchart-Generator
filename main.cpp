@@ -286,13 +286,9 @@ void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigra
  * quarter, and the quarter that the user plans to start taking the classes in.
  */
 void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph, set<int> availableClasses[3], int maxCredits, int startQuarter) {
-    // Create a file with all of the ids for the courses along with their 
-
-
     // File output to .txt file to be read and used in python to create a display of the classes
     // Use ../output.txt in CLion, and output.txt for ubuntu
     ofstream outputFile("output.txt");
-
     int currentYear = 1;
 //    cout << "Year 1:" << endl;
     int currentQuarter = startQuarter - 1;

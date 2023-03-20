@@ -14,9 +14,11 @@ from graphviz import Digraph
 
 
 graph = Digraph()
-graph.node("1", "CSC 3000 (1)")
-graph.node("2", "CSC 1230 (5)")
-graph.node("3", "CSC 2430 (5)")
+# graph.node("1", "CSC 3000 (1)")
+# graph.node("2", "CSC 1230 (5)")
+# graph.node("3", "CSC 2430 (5)")
+
+
 
 graph.render('Flowchart.gv.pdf', view=True)
 
