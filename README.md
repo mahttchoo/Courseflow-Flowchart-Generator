@@ -32,6 +32,7 @@ Download the project from this repository. The Lemon library is included in this
 Please watch this Youtube video (https://www.youtube.com/watch?v=ddMZyd1Rh9o) where we walked through running the code and showed what the  output looks like.
 
 ## Reflection
+### Graph Generation and Picking Classes:
 The list of courses are supplied in the .txt files and are formatted like:
 CSC 1230, Problem Solving and Programming, 5, [], [1,2,3]
 
@@ -46,3 +47,23 @@ In order to decide which classes are taken which quarter, a value called priorit
 Priority is best defined as the length of the longest path from any given node. The idea is you want to get the classes that are the super prerequisites out of the way as soon as possible. In order to assign the priority of each node, it is important to realize that the directed graph cannot move backwards at all. A class cannot be a prerequisite for its own prerequisite. This means that the whole graph is a directed acyclic graph and can be traversed like a tree. We run a recursive DFS on each rootCourse and increment each priority of each node as we traverse back up the tree. The code is written dynamically, if a node's priority was already set by a previous call of DFS, a future DFS recognizes that and does not traverse down that path. This code is run in O(n) time.
 
 We then start at the starting quarter, and iterate through the set in availableClasses[] for that quarter. The code finds the class in the set with the best priority, and takes that class if there are remaining credits for it. If so, it removes the class from all sets in availableClasses[], decrements the credits left that can be taken that quarter, and repeats until there are no more classes to take. This code runs in O(n(n-1)(n-2)...) where n is the set size (normally around 10 at most) and not the number of total nodes. After this is done, the quarter is incremented, all courses connected to the edges of taken classes are added to availableClasses[], and the code repeats again. This code repeats until all courses are taken.
+
+### Graphical Output:
+We tried a lot of different things when it came to the graphics output. Some of the things we tried were:
+- Setting up OpenGL with glfw
+  - This was too overkill and too complicated for us to learn from scratch.
+- Creating a front-end with browser javascript
+  - We tried building the graphics via an output file from c++, but web browsers block direct file viewing. We would need a live server to get it to work, and that wouldn't work easily without using VSCode's Liveserver. Which we couldn't use since IDEs were off-limits here.
+  - We looked into WebAssembly to connect our c++ code to javascript but we didn't have any luck.
+- Creating a python front-end and using tkinter to create a GUI
+  - Was pretty promising, but the output would never run from Ubuntu no matter what we tried. The displays wouldn't be assigned and a window would never pop-up, the tkinter module wouldn't download, the tkinter module wouldn't be recognized, the displays were getting locked in linux.
+- Creating a python front-end and using
+  - t
+
+Ultimately we ended up outputing a .ppm file, which is a "Portable Pixel Map," and is a list of the rgb values in an image. We used this like a bitmap and iterated over the pixels we wanted to recolor. It was a lot of work considering everything had to be written from scratch, but it was extremely straight-forwards. We wrote our own box generation, word generation function, and line renderer.
+
+The box generator takes the x and y coordinates, width, height, and color. It simply starts at x and y and recolors going horizontally to the right and vertically downwards.
+
+The word generation takes a string, an x/y coordinate, and color. and for each character in that string it calls a letter generation for every character. The letter generation stores integer arrays defining the outlines of the letters in a switch case. These letters are mapped onto the image at the correct location with their respective color.
+
+The line renderer takes in a start position, end position, and color. It calculates the slope as a float and iterates through the x positions, placed it at the correct y coordinate according to the slope.
