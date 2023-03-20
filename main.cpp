@@ -766,9 +766,7 @@ void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph,
 
         y -= 71;
         for (auto itr = s.begin(); itr !=s.end(); itr++) {
-            // Just output the courseCodes and credits
-            outputFile << data[graph.nodeFromId(*itr)]->GetCourseCode() << ": " <<
-            data[graph.nodeFromId(*itr)]->GetCredits() << endl;
+            outputFile << data[graph.nodeFromId(*itr)]->ToString() << endl;
 
             y += 71;
             vector<int> coords;

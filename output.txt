@@ -1,106 +1,48 @@
-<<<<<<< Updated upstream
-Quarter 2:
-CSC 1230: 5
-=======
 Quarter 1:
-CHM 1211: 5
->>>>>>> Stashed changes
-MAT 1234: 5
+CHM 1211, General Chemistry I, 5, [], [1,2]
+MAT 1234, Calculus I, 5, [], [1,2]
+PHY 1121, Physics for Sci & Engineering, 5, [], [1]
+UCOL 1000, Modern American Conservatism, 1, [], [1]
+Quarter 2:
+BIO 2101, General Biology, 5, [CHM 1211], [1,2]
+CHM 1212, General Chemistry II, 5, [CHM 1211], [2,3]
+MAT 1235, Calculus II, 5, [MAT 1234], [2,3]
 Quarter 3:
-CSC 2430: 5
-MAT 1235: 5
+CHM 1213, General Chemistry III, 3, [CHM 1212], [3]
+UCOR 2000, Emergence of the Modern Global System, 5, [], [1,2,3]
+UFDN 1000, The Christian Faith, 5, [], [1,2,3]
+WRI 1000, Academic Inquiry and Writing Seminar, 5, [], [1,2,3]
 Quarter 1:
-CSC 2431: 5
-PHY 1121: 5
-UCOL 1000: 1
+BIO 3325, Genetics, 5, [BIO 2101, MAT 1235], [1,2]
+CHM 3371, Organic Chemistry I, 5, [CHM 1212], [1]
+UFDN 2000, Christian Scripture, 5, [UFDN 1000], [1,2,3]
 Quarter 2:
-<<<<<<< Updated upstream
-CSC 3220: 4
-MAT 2200: 3
-UFDN 1000: 5
+BIO 2102, General Biology, 5, [BIO 2101], [2,3]
+CHM 3372, Organic Chemistry II, 5, [CHM 3371], [2]
+PHY 1122, Physics for Sci & Engineering, 5, [PHY 1121], [2]
 Quarter 3:
-CSC 3150: 5
-CSC 3221: 4
-CSC 3350: 3
+CHM 2960, Intro to Research Methods, 1, [], [3]
+CHM 3373, Organic Chemistry III, 5, [CHM 3372], [3]
+CHM 3422, Statistical Thermodynamics, 4, [CHM 1212, PHY 1123, MAT 1235], [3]
+BIO 3350, Immunology, 3, [BIO 2101], [3]
+PHY 1123, Physics for Sci & Engineering, 5, [PHY 1122], [3]
 Quarter 1:
-MAT 1720: 5
-MAT 2401: 3
-CSC 3000: 1
-CSC 4151: 3
+CHM 3225, Quantitative Analysis and Equilibrium, 5, [CHM 1212], [1]
+CHM 4361, Biochemistry, 5, [CHM 3373], [1,2]
+MAT 1236, Calculus III, 5, [MAT 1235], [1,3]
 Quarter 2:
-CSC 3750: 5
-PHY 1122: 5
+BIO 4325, Molecular Biology, 5, [BIO 2101, BIO 3325], [2]
+CHM 4362, Biochemistry, 5, [CHM 4361], [2,3]
+UCOR 3000, Faith Philosophy and Science, 5, [UCOR 2000], [1,2,3]
 Quarter 3:
-UCOR 2000: 5
-UFDN 2000: 5
+CHM 3422, Statistical Thermodynamics, 4, [CHM 1212, PHY 1123, MAT 1235], [3]
+CHM 4363, Biochemistry, 3, [CHM 4362], [3]
+UFDN 3100, Christian Theology, 5, [UFDN 2000], [1,2,3]
+WRI 1100, STEM Reseach and Writing Seminar, 5, [WRI 1000], [1,2,3]
 Quarter 1:
-CSC 3310: 4
-WRI 1000: 5
+CHM 4899, Natural Sciences Capstone Sem, 2, [], [1,2,3]
+ART 1102, Drawing Studio Observation and Realism, 5, [], [1,2,3]
+ENG 2248, International Fiction, 5, [], [1,3]
+ECN 2102, Principles in Macroeconomics, 5, [], [1,2,3]
 Quarter 2:
-CSC 3430: 4
-CSC 4410: 5
-CSC 4152: 3
-Quarter 3:
-CSC 3350: 3
-CSC 4898: 2
-MAT 1236: 5
-CSC 4941: 1
-Quarter 1:
-UCOR 3000: 5
-UFDN 3100: 5
-Quarter 2:
-CSC 4220: 3
-WRI 1100: 5
-=======
-BIO 2101: 5
-CHM 1212: 5
-MAT 1235: 5
-Quarter 3:
-CHM 1213: 3
-UCOR 2000: 5
-UFDN 1000: 5
-WRI 1000: 5
-Quarter 1:
-BIO 3325: 5
-CHM 3371: 5
-UFDN 2000: 5
-Quarter 2:
-BIO 2102: 5
-CHM 3372: 5
-PHY 1122: 5
->>>>>>> Stashed changes
-Quarter 3:
-CHM 2960: 1
-CHM 3373: 5
-CHM 3422: 4
-BIO 3350: 3
-PHY 1123: 5
-<<<<<<< Updated upstream
-CSC 4750: 5
-Quarter 1:
-=======
-Quarter 1:
-CHM 3225: 5
-CHM 4361: 5
-MAT 1236: 5
-Quarter 2:
-BIO 4325: 5
-CHM 4362: 5
-UCOR 3000: 5
-Quarter 3:
-CHM 3422: 4
-CHM 4363: 3
-UFDN 3100: 5
-WRI 1100: 5
-Quarter 1:
-CHM 4899: 2
->>>>>>> Stashed changes
-ART 1102: 5
-ENG 2248: 5
-Quarter 2:
-ECN 2102: 5
-<<<<<<< Updated upstream
-=======
-Quarter 2:
->>>>>>> Stashed changes
-BUS 2000: 5
+BUS 2000, Purpose and Practice of Business, 5, [], [1,2,3]
