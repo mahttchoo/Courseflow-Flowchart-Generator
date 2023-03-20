@@ -43,6 +43,10 @@ void CourseNode::SetPriority(int i) {
     _priority = i;
 }
 
+void CourseNode::SetCoords(vector<int> v) {
+    _coords = v;
+}
+
 // Returns the course code
 string CourseNode::GetCourseCode() const {
     return _courseCode;
@@ -74,4 +78,8 @@ vector<int> CourseNode::GetArcs() const {
 
 int CourseNode::GetPriority() const {
     return _priority;
+}
+
+vector<int> CourseNode::GetCoords() const {
+    return _coords;
 }

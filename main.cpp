@@ -37,7 +37,7 @@
 #include <vector>
 #include <set>
 #include <cstring>
-#include "picture.h"
+#include <cstdlib>
 #include "coursenode.h"
 #include <lemon/smart_graph.h>
 
@@ -49,8 +49,8 @@ set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap
 void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph);
 void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph, set<int> availableClasses[3], int maxCredits, int startQuarter);
 
+void lineRenderer(int start_x, int start_y, int end_x, int end_y, int rgb[3]);
 void box(int x, int y, int width, int height, int rgb[3]);
-void line(int start_x, int start_y, int end_x, int end_y, int width, int rgb[3]);
 void letter(int x, int y, char letter, int rgb[3]);
 void word(int x, int y, string s, int rgb[3]);
 
@@ -68,9 +68,9 @@ int main() {
 
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
-            arr[i][j][0] = 200;
-            arr[i][j][1] = 200;
-            arr[i][j][2] = 200;
+            arr[i][j][0] = 230;
+            arr[i][j][1] = 230;
+            arr[i][j][2] = 230;
         }
     }
 
@@ -136,8 +136,8 @@ int main() {
     if (input == "y") {
         // Take the user input as a string, then try to convert it to an integer. If this doesn't work,
         // tell the user to input an integer. The input must be between 5 and 18 credits
-        while (maxCredits < 5 || maxCredits > 18) {
-            cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+        while (maxCredits < 12 || maxCredits > 18) {
+            cout << "Please enter the maximum number of credits you would like to take per quarter (12 - 18)" << endl;
             cin >> input;
             try {
                 maxCredits = stoi(input);
@@ -157,7 +157,7 @@ int main() {
                 cout << "Please enter an integer." << endl;
             }
         }
-        cout << "\nYou will take no more than " << maxCredits << " classes per quarter and are starting in quarter ";
+        cout << "\nYou will take no more than " << maxCredits << " credits per quarter and are starting in quarter ";
         cout << startQuarter << "." << endl << endl;
     } else if (input == "n") {
         maxCredits = 18;
@@ -184,14 +184,9 @@ int main() {
 
     // Now call createOutput, which will write the courses in the correct order into the output.txt file
     createOutput(data, graph, availableClasses, maxCredits, startQuarter);
-    cout << "output.txt file has been created. Please run the python code to generate the flowchart for these classes." << endl;
+    cout << "output.txt file has been created." << endl;
 
-    // Destructor
-    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        delete data[n];
-    }
-
-    ofstream img ("picture.ppm");
+    ofstream img ("no_edges_picture.ppm");
     img << "P3" << endl;
     img << width << " " << height << endl;
     img << "255" << endl;
@@ -206,6 +201,41 @@ int main() {
         }
     }
     img.close();
+
+
+    // Driver function for the lines between classes.
+    int rgb[3];
+    for(SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        vector<int> svect = data[n]->GetCoords();
+        rgb[0] = rand() % 306 - 50;
+        rgb[1] = rand() % 306 - 50;
+        rgb[2] = rand() % 306 - 50;
+        for(SmartDigraph::OutArcIt a(graph, n); a != INVALID; ++a) {
+            vector<int> evect = data[graph.target(a)]->GetCoords();
+            lineRenderer(svect.at(0) + 40, svect.at(1) + 7, evect.at(0) - 1, evect.at(1) + 7, rgb);
+        }
+    }
+
+    ofstream img2 ("edges_picture.ppm");
+    img2 << "P3" << endl;
+    img2 << width << " " << height << endl;
+    img2 << "255" << endl;
+
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+            int r = arr[x][y][0];
+            int g = arr[x][y][1];
+            int b = arr[x][y][2];
+
+            img2 << r << " " << g << " " << b << endl;
+        }
+    }
+    img2.close();
+
+    // Destructor
+    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
+        delete data[n];
+    }
 
     return 0;
 };
@@ -339,21 +369,6 @@ void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigra
     data[node]->SetPriority(max + 1);
 }
 
-// Currently un-used
-vector<CourseNode*> mergeSort(vector<CourseNode*> v) {
-    cout << v.size() << endl;
-    // Base Case
-    if (v.size() == 1) {
-        return v;
-    }
-
-    // Assign v1 = v[0] to v[n/2] and v2 = v[n/2 + 1] to v[n]
-    //v1 = mergeSort(v1);
-    //v2 = mergeSort(v2);
-
-    // Merging both sides
-}
-
 void box(int x, int y, int width, int height, int rgb[3]) {
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
@@ -364,32 +379,16 @@ void box(int x, int y, int width, int height, int rgb[3]) {
     }
 }
 
-void line(int start_x, int start_y, int end_x, int end_y, int width, int rgb[3]) {
-    int sy = start_y;
-    cout << "line() was called" << endl;
-    int y_segments = (end_y - start_y) / (end_x - start_x);
-    int x_segments = (end_x - start_x) / (end_y - start_y);
-    y_segments++;
-    x_segments++;
-    cout << "segments: " << y_segments << endl;
-
+void lineRenderer(int start_x, int start_y, int end_x, int end_y, int rgb[3]) {
+    float rise = end_y - start_y;
+    float run = end_x - start_x;
+    float slope = rise / run;
     for (int x = start_x; x < end_x; x++) {
-        if (x % x_segments == 0) {
-            sy++;
-        }
-        for (int y = sy; y < y_segments + sy; y++) {
-            arr[x][y][0] = rgb[0];
-            arr[x][y][1] = rgb[1];
-            arr[x][y][2] = rgb[2];
-        }
-        sy += y_segments - 1;
+        int y = int(start_y + (slope * (x - start_x)));
+        arr[x][y][0] = rgb[0];
+        arr[x][y][1] = rgb[1];
+        arr[x][y][2] = rgb[2];
     }
-    arr[start_x][start_y][0] = 0;
-    arr[start_x][start_y][1] = 0;
-    arr[start_x][start_y][2] = 0;
-    arr[end_x][end_y][0] = 0;
-    arr[end_x][end_y][1] = 0;
-    arr[end_x][end_y][2] = 0;
 }
 
 void word(int x, int y, string s, int rgb[3]){
@@ -651,6 +650,16 @@ void letter(int x, int y, char letter, int rgb[3]) {
             memcpy(letArr, p, sizeof(letArr));
             break;
         }
+        case 81: // Letter Q
+        {
+            int p[5][3] = {1, 1, 1,
+                           1, 0, 1,
+                           1, 0, 1,
+                           1, 1, 0,
+                           0, 0, 1};
+            memcpy(letArr, p, sizeof(letArr));
+            break;
+        }
         case 82: // Letter R
         {
             int r[5][3] = {1, 1, 0,
@@ -736,33 +745,51 @@ void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph,
     ofstream outputFile("output.txt");
 
     int currentYear = 1;
-//    cout << "Year 1:" << endl;
     int currentQuarter = startQuarter - 1;
     while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
-        // Each time that the quarter is 3 (quarters are 0, 1, 2), another year has gone by
+        int titleColor[3] = {0, 0, 0};
+
+        word(10, 10, "YEAR 1", titleColor);
+
+        // Each time that the quarter is 3 (quarters are 0, 1, 2), another year has gone by.
         if (currentQuarter == 3) {
             currentYear++;
+            word(((currentYear - 1) * 190) + 10, 10, "YEAR " + to_string(currentYear), titleColor);
         }
         currentQuarter = currentQuarter % 3;
         set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear, data, graph);
 
         outputFile << "Quarter " << currentQuarter + 1 << ":" << endl;
 
-        int c = -1;
+        int x = ((currentYear - 1) * 190) + (currentQuarter * 60) + ((startQuarter - 1) * -50);
+        int y = 22;
+
+        word(x, y - 6, "QUARTER " + to_string(currentQuarter + 1), titleColor);
+
+        y -= 71;
         for (auto itr = s.begin(); itr !=s.end(); itr++) {
-            c++;
             // Just output the courseCodes and credits
             outputFile << data[graph.nodeFromId(*itr)]->GetCourseCode() << ": " <<
             data[graph.nodeFromId(*itr)]->GetCredits() << endl;
 
-            int rgb[3] = {100,100,100};
-            box(((currentYear - 1) * 190) + (currentQuarter * 60) + 10 + ((startQuarter - 1) * -50),(c * 71) + 10,40,15,rgb);
+            y += 71;
+            vector<int> coords;
+            coords.push_back(x);
+            coords.push_back(y);
+            data[graph.nodeFromId(*itr)]->SetCoords(coords);
 
-            int rgb2[3] = {255,255,100};
+            arr[x][y][0] = 255;
+            arr[x][y][1] = 255;
+            arr[x][y][2] = 255;
+
+            int rgb[3] = {100, 100, 100};
+            box(x, y, 40, 15, rgb);
+
+            int rgb2[3] = {255,255,255};
             string code = data[graph.nodeFromId(*itr)]->GetCourseCode();
             char credits = char(data[graph.nodeFromId(*itr)]->GetCredits() + 48);
-            word(((currentYear - 1) * 190) + (currentQuarter * 60) + 13 + ((startQuarter - 1) * -50),(c * 71) + 12,code,rgb2);
-            letter(((currentYear - 1) * 190) + (currentQuarter * 60) + 13 + ((startQuarter - 1) * -50),(c * 71) + 18,credits,rgb2);
+            word(x + 3, y + 2, code, rgb2);
+            letter(x + 3, y + 8, credits, rgb2);
 
             availableClasses[0].erase(*itr);
             availableClasses[1].erase(*itr);
