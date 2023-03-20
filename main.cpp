@@ -201,6 +201,8 @@ int main() {
     }
     img.close();
 
+    cout << "Picture without edges has been generated." << endl;
+
 
     // Driver function for the lines between classes.
     int rgb[3];
@@ -230,6 +232,7 @@ int main() {
         }
     }
     img2.close();
+    cout << "Picture with edges has been generated." << endl;
 
     // Destructor
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
@@ -756,7 +759,7 @@ void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph,
 
         outputFile << "Quarter " << currentQuarter + 1 << ":" << endl;
 
-        int x = ((currentYear - 1) * 190) + (currentQuarter * 60) + ((startQuarter - 1) * -50);
+        int x = ((currentYear - 1) * 190) + (currentQuarter * 60) + ((startQuarter - 1) * -50) + 10;
         int y = 22;
 
         word(x, y - 6, "QUARTER " + to_string(currentQuarter + 1), titleColor);
