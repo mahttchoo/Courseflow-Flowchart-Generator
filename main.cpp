@@ -159,7 +159,7 @@ int main() {
         cout << "\nYou will take no more than " << maxCredits << " credits per quarter and are starting in quarter ";
         cout << startQuarter << "." << endl << endl;
     } else if (input == "n") {
-        maxCredits = 100;
+        maxCredits = 18;
         startQuarter = 1;
     }
 
@@ -799,8 +799,5 @@ void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph,
 
         currentQuarter++;
     }
-
-    // Add the edges to the file
-
     outputFile.close();
 }

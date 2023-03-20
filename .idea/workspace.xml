@@ -15,21 +15,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="661317a0-aaa5-4e39-a0f0-e0c30cf0cbf3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/edges_picture.ppm" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/no_edges_picture.ppm" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake_install.cmake" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/coursenode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/coursenode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/coursenode.h" beforeDir="false" afterPath="$PROJECT_DIR$/coursenode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edges_picture.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/edges_picture.ppm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/flowchart" beforeDir="false" afterPath="$PROJECT_DIR$/flowchart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/flowchart_the_fellowship" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/major_flowchart.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/no_edges_picture.ppm" beforeDir="false" afterPath="$PROJECT_DIR$/no_edges_picture.ppm" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/picture.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/picture.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/picture.ppm" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +76,7 @@
       <option name="presentableId" value="Default" />
       <updated>1679248576538</updated>
       <workItem from="1679250651361" duration="9364000" />
-      <workItem from="1679274743997" duration="6880000" />
+      <workItem from="1679274743997" duration="7249000" />
     </task>
     <servers />
   </component>
