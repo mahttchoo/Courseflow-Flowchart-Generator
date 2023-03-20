@@ -34,6 +34,7 @@ Please watch this Youtube video (https://www.youtube.com/watch?v=ddMZyd1Rh9o) wh
 ## Reflection
 ### Graph Generation and Picking Classes:
 The list of courses are supplied in the .txt files and are formatted like:
+
 CSC 1230, Problem Solving and Programming, 5, [], [1,2,3]
 
 We have a filereader that iterates through every line in the selected .txt and saves it in memory in a CourseNode object that contains each datapoint from the line (Course code, course title, credits, prerequisites, and offering times). The coursenode object is saved in a Node object from lemon, that is part of our graph. The Node objects are ordered as the .txt was ordered. The filereader runs in O(n) time.
@@ -57,10 +58,10 @@ We tried a lot of different things when it came to the graphics output. Some of 
   - We looked into WebAssembly to connect our c++ code to javascript but we didn't have any luck.
 - Creating a python front-end and using tkinter to create a GUI
   - Was pretty promising, but the output would never run from Ubuntu no matter what we tried. The displays wouldn't be assigned and a window would never pop-up, the tkinter module wouldn't download, the tkinter module wouldn't be recognized, the displays were getting locked in linux.
-- Creating a python front-end and using
-  - t
+- Creating a python front-end and using diagrams in graphvis.
+  - Had a challenging time connecting the output from the c++ code to the python code in a meaningful way.
 
-Ultimately we ended up outputing a .ppm file, which is a "Portable Pixel Map," and is a list of the rgb values in an image. We used this like a bitmap and iterated over the pixels we wanted to recolor. It was a lot of work considering everything had to be written from scratch, but it was extremely straight-forwards. We wrote our own box generation, word generation function, and line renderer.
+Ultimately we ended up outputting a .ppm file, which is a "Portable Pixel Map," and is a list of the rgb values in an image. We used this like a bitmap and iterated over the pixels we wanted to recolor. It was a lot of work considering everything had to be written from scratch, but it was extremely straight-forwards. We wrote our own box generation, word generation function, and line renderer.
 
 The box generator takes the x and y coordinates, width, height, and color. It simply starts at x and y and recolors going horizontally to the right and vertically downwards.
 
