@@ -36,3 +36,7 @@
 /cmake-build-debug
 
 .DS_Store
+
+#Python
+__pycache__/
+*.py[cod]

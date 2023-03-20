@@ -23,9 +23,15 @@
 ///\file
 ///\brief ListDigraph and ListGraph classes.
 
+<<<<<<< HEAD
 #include "../lemon/core.h" // I editted these!!!!
 #include "../lemon/error.h"
 #include "../lemon/bits/graph_extender.h"
+=======
+#include <lemon/core.h>
+#include <lemon/error.h>
+#include <lemon/bits/graph_extender.h>
+>>>>>>> Mark's-Work
 
 #include <vector>
 #include <list>

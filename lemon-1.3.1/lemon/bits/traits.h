@@ -23,7 +23,11 @@
 //\brief Traits for graphs and maps
 //
 
+<<<<<<< HEAD
 #include "enable_if.h" //#include <lemon/bits/enable_if.h>
+=======
+#include <lemon/bits/enable_if.h>
+>>>>>>> Mark's-Work
 
 namespace lemon {
 

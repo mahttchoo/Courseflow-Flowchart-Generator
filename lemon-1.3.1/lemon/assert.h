@@ -23,7 +23,11 @@
 /// \file
 /// \brief Extended assertion handling
 
+<<<<<<< HEAD
 #include "error.h" //#include <lemon/error.h>
+=======
+#include <lemon/error.h>
+>>>>>>> Mark's-Work
 
 namespace lemon {
 
