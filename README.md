@@ -4,7 +4,7 @@ Created by Mark Clemmer and Matthew Fisk
 This project takes in an input file with all the classes for a major and puts them into a graph, which is used to create a flowchart to show the order in which the classes could be taken.
 
 ## Description
-This project was created in C++ with mingw and uses the Lemon library to make a graph out of the courses from an input file. This graph is then used to create a flowchart using a Portable Pixel Map (PPM), which shows the courses that can be taken each quarter for the specific major. We created an output.txt file to show the courses.
+This project was created in C++ with mingw and uses the Lemon library to make a graph out of the courses from an input file. This graph is then used to create both a text output and a visual flowchart using a Portable Pixel Map (PPM), which shows the courses that can be taken each quarter for the specific major.
 
 ## Requirements
 - CMake VERSION 3.16.3 was used to create this project
@@ -15,6 +15,7 @@ This project was created in C++ with mingw and uses the Lemon library to make a 
 ## User Manual
 ### Setup:
 Download the project from this repository. The Lemon library is included in this project, and no additional things are needed.
+Please watch this Youtube video (https://www.youtube.com/watch?v=ddMZyd1Rh9o) where we walked through running the code and showed what the  output looks like.
 ### Running the Program in Ubuntu:
 1) g++ -o flowchart -I./lemon-1.3.1 -I./lemon-1.3.1/build main.cpp coursenode.cpp coursenode.h
 2) ./flowchart
@@ -22,7 +23,6 @@ Download the project from this repository. The Lemon library is included in this
 4) Type "y" to enter constraints or "n" to have no constraints. If "y" was selected, enter the maximum credits per quarter and the quarter when you would like to start school.
 Running the project should look like this:
 ![image](https://user-images.githubusercontent.com/94164990/226270211-c14c3b6e-0957-47ea-be09-73f85dac6ccc.png)
-
 
 ### Viewing the Results:
 - Navigate into the folder where this project is located
@@ -33,9 +33,6 @@ Running the project should look like this:
 - Please open this ppm viewer (https://www.cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html) and then select the no_edges_picture.ppm or edges_picture.ppm file to view it.
 ![image](https://user-images.githubusercontent.com/94164990/226267737-f931db2f-7bdb-4845-8a53-0cddae4bcf05.png)
 ![image](https://user-images.githubusercontent.com/94164990/226267829-e38245f8-586e-46b6-a1dd-d724316fd025.png)
-
-
-Please watch this Youtube video (https://www.youtube.com/watch?v=ddMZyd1Rh9o) where we walked through running the code and showed what the  output looks like.
 
 ## Reflection
 ### Graph Generation and Picking Classes:
