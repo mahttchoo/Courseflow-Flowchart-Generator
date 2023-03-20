@@ -1,9 +1,6 @@
 /*
- * TODO: Give an option to select the file later. Might have to use command line parameters.
- * TODO: Allow user to select which file they want to make a graph of.
  * TODO: Make sure there are no memory leaks.
  * TODO: Make createNode() a constructor within the class and not a function here?
- * TODO: Look into changing the file reader to using a try/catch block and throwing errors if the file isn't opened.
  * TODO: Sort the nodes in the graph so searching for pre-reqs takes O(logn) instead of O(n).
  * TODO: Add a check to make sure the maxCredits is above 5 (or maybe we might have 12 minimum).
  * TODO: Try passing a set by reference into pickClasses, and editing that set as I go through.
@@ -47,12 +44,10 @@
 using namespace std;
 using namespace lemon;
 
-CourseNode* createNode(string input); // This should probably be a constructor in the courseNode.cpp file.
-set<int> pickClasses(set<int> s, int maxCredits, int year); // Returns optimal set of classes that is under the max credits given a set of classes.
-void assignPriority(int id); // Given the id of a node, sets the priority of that node and every node reachable from it as the length of its longest path.
-
-SmartDigraph graph;
-SmartDigraph::NodeMap<CourseNode*> data(graph);
+CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // This should probably be a constructor in the courseNode.cpp file.
+set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph); // Returns optimal set of classes that is under the max credits given a set of classes.
+void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph);
+void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph, set<int> availableClasses[3], int maxCredits, int startQuarter);
 
 void box(int x, int y, int width, int height, int rgb[3]);
 void line(int start_x, int start_y, int end_x, int end_y, int width, int rgb[3]);
@@ -81,40 +76,35 @@ int main() {
 
     set<int> availableClasses[3]; // Array of sets of node ids of courses that are available. Array index determines quarter.
     set<int> finalClasses[4][3];
+    // graph and data are the heart of the graph
+    SmartDigraph graph;
+    SmartDigraph::NodeMap<CourseNode*> data(graph);
 
     string line;
     ifstream readFile;
-    readFile.open("major1.txt"); // Will change this to open the user selected file.
-    if (readFile.is_open()) {
-        // TODO: define vector here
-        while (!readFile.eof()) {
-            getline(readFile, line);
-            // Create the node with the given line that contains a course
-            CourseNode* course = createNode(line);
-            // Add node to graph here
-            SmartDigraph::Node n = graph.addNode();
-            data[n] = course;
+    string inputFile;
+
+    cout << "major1.txt contains courses for a Computer Science major and major2.txt contains courses"
+            " for a Biochemistry major." << endl;
+    while (!readFile.is_open()) {
+        cout << "Please enter [major1.txt] or [major2.txt] to select your major." << endl;
+        cin >> inputFile;
+        if (inputFile == "major1.txt" || inputFile == "major2.txt") {
+            // Use "../" + inputFile to run in CLion, and inputFile to run in ubuntu
+            readFile.open(inputFile);
         }
-        //TODO:
-        // Use merge sort on vector
-        // Iterate through vector and put course nodes into graph
-        /*for (int i = 0; i < vect.size(); i++) {
-            SmartDigraph::Node n = graph.addNode();
-            data[n] = vect[i];
-        }*/
-    } else {
-        // Should we set this to throwing an error using a try/catch block?
-        cout << "File could not be opened." << endl;
+    }
+    // The file is open now, so get each line and create the CourseNodes
+    while (!readFile.eof()) {
+        getline(readFile, line);
+        // Create the node with the given line that contains a course
+        CourseNode* course = createNode(line, data, graph);
+        // Add node to graph here
+        SmartDigraph::Node n = graph.addNode();
+        data[n] = course;
     }
     readFile.close();
 
-    // Step through the graph
-//    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-//        cout << "Node of id " << graph.id(n) << "         " << data[n]->ToString() << endl;
-//    }
-
-    // TODO: This is what causes O(n^2) time complexity, change later for O(nlogn)
-    int arcCount = 0;
     // Iterate through the graph to add the edges/arcs
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
          // Traverse through the requirements vector for the current node
@@ -126,10 +116,8 @@ int main() {
                      // The arc should be directed from data[j] to data[n]
                      SmartDigraph::Arc a = graph.addArc(j, n);
                      data[j]->AddArc(graph.id(a));
-                     arcCount++;
                  }
              }
-
          }
     }
 
@@ -138,27 +126,43 @@ int main() {
     int startQuarter = 0;
     string input;
 
-    while (maxCredits < 5 || maxCredits > 18) {
-        cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+    cout << "Would you like to enter the maximum number of credits you would like to take each quarter and"
+            " the quarter that you will start in?" << endl;
+    while (input != "y" && input != "n") {
+        cout << "Please enter [y] for yes or [n] for no." << endl;
         cin >> input;
-        try {
-            maxCredits = stoi(input);
-        } catch (exception &err) {
-            cout << "Please enter an integer." << endl;
-        }
     }
-    cout << "Please enter the quarter you are starting school" << endl;
-    while (startQuarter < 1 || startQuarter > 3) {
-        cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
-        cin >> input;
-        try {
-            startQuarter = stoi(input);
-        } catch (exception &err) {
-            cout << "Please enter an integer." << endl;
+
+    if (input == "y") {
+        // Take the user input as a string, then try to convert it to an integer. If this doesn't work,
+        // tell the user to input an integer. The input must be between 5 and 18 credits
+        while (maxCredits < 5 || maxCredits > 18) {
+            cout << "Please enter the maximum number of credits you would like to take per quarter (5 - 18)" << endl;
+            cin >> input;
+            try {
+                maxCredits = stoi(input);
+            } catch (exception &err) {
+                cout << "Please enter an integer." << endl;
+            }
         }
+        // The input must be 1, 2, or 3 for the quarter selection. Anything else won't work, and the user
+        // must try again.
+        cout << "Please enter the quarter you are starting school" << endl;
+        while (startQuarter < 1 || startQuarter > 3) {
+            cout << "[1] for Autumn, [2] for Winter, and [3] for Spring" << endl;
+            cin >> input;
+            try {
+                startQuarter = stoi(input);
+            } catch (exception &err) {
+                cout << "Please enter an integer." << endl;
+            }
+        }
+        cout << "\nYou will take no more than " << maxCredits << " classes per quarter and are starting in quarter ";
+        cout << startQuarter << "." << endl << endl;
+    } else if (input == "n") {
+        maxCredits = 18;
+        startQuarter = 1;
     }
-    cout << "\nYou will take no more than " << maxCredits << " per quarter." << endl;
-    cout << "You are starting in quarter " << startQuarter << "." << endl << endl;
 
     // Generating a Set of classes the user actually has available.
     set<int> rootCourses;
@@ -175,79 +179,13 @@ int main() {
 
     // Driver function for assignPriority(), since assignPriority() is a DFS recursive function.
     for (set<int>::iterator itr = rootCourses.begin(); itr != rootCourses.end(); itr++) {
-        assignPriority(*itr);
+        assignPriority(*itr, data, graph);
     }
 
-//    for (int i = 0; i < 3; i++) { // Iterate through availableClasses for quarters 1, 2, and 3.
-//        cout << "\nClasses that a freshman student can take in quarter " << i + 1 << endl;
-//        set<int>::iterator itr;
-//        // Displaying set elements
-//        for (itr = availableClasses[i].begin(); itr != availableClasses[i].end(); itr++) {
-//            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
-//        }
-//    }
+    // Now call createOutput, which will write the courses in the correct order into the output.txt file
+    createOutput(data, graph, availableClasses, maxCredits, startQuarter);
+    cout << "output.txt file has been created. Please run the python code to generate the flowchart for these classes." << endl;
 
-    /*
-    cout << "\n\nPrinting out the node priorities:" << endl << endl;
-    for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
-        cout << data[n]->ToString() << endl << "\tPriority Value: " << data[n]->GetPriority() << endl;
-    }
-    */
-
-    // File output to .txt file to be read and used in Javascript to create a display of the classes
-    ofstream outputFile("output.txt");
-
-    // This runs as long as there are more classes the user can take.
-    int currentYear = 1;
-    cout << "Year 1:" << endl;
-    int currentQuarter = startQuarter - 1; // We have fall/winter/spring quarters labelled as 1/2/3 for the user, but the availableClasses[][] stores this using index 0/1/2 respectively.
-    while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
-        // Each time that the quarter is 3 (quarters are 0, 1, 2), another year has gone by
-        if (currentQuarter == 3) {
-            currentYear++;
-            cout << endl << "Year " << currentYear << ":" << endl;
-        }
-
-        currentQuarter = currentQuarter % 3; // If quarter is greater than spring, it wraps it back to fall.
-        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear);
-
-        cout << "\nCLASSES TO TAKE DURING QUARTER " << currentQuarter + 1 << ":" << endl;
-
-        outputFile << "Quarter " << currentQuarter + 1 << endl;
-
-        // Iterate through set of classes generated by pickClasses() for the current quarter,
-        // add those classes to the output and output file,
-        // then remove them from classes the user can take in availableClasses.
-        int c = -1;
-        for (auto itr = s.begin(); itr !=s.end(); itr++) {
-            c++;
-            cout << "\t" << data[graph.nodeFromId(*itr)]->ToString() << endl;
-
-            outputFile << data[graph.nodeFromId(*itr)]->ToString() << endl;
-
-            int rgb[3] = {100,100,100};
-            box(((currentYear - 1) * 190) + (currentQuarter * 60) + 10 + ((startQuarter - 1) * -50),(c * 71) + 10,40,15,rgb);
-
-            int rgb2[3] = {255,255,100};
-            string code = data[graph.nodeFromId(*itr)]->GetCourseCode();
-            char credits = char(data[graph.nodeFromId(*itr)]->GetCredits() + 48);
-            word(((currentYear - 1) * 190) + (currentQuarter * 60) + 13 + ((startQuarter - 1) * -50),(c * 71) + 12,code,rgb2);
-            letter(((currentYear - 1) * 190) + (currentQuarter * 60) + 13 + ((startQuarter - 1) * -50),(c * 71) + 18,credits,rgb2);
-
-            availableClasses[0].erase(*itr);
-            availableClasses[1].erase(*itr);
-            availableClasses[2].erase(*itr);
-            for (SmartDigraph::OutArcIt a(graph, graph.nodeFromId(*itr)); a != INVALID; ++a) {
-                vector<int> v = data[graph.target(a)]->GetQuarters();
-                for (int j = 0; j < v.size(); j++) {
-                    availableClasses[v[j] - 1].insert(graph.id(graph.target(a)));
-                }
-            }
-        }
-        currentQuarter++;
-    }
-
-    outputFile.close();
     // Destructor
     for (SmartDigraph::NodeIt n(graph); n != INVALID; ++n) {
         delete data[n];
@@ -277,7 +215,7 @@ int main() {
  * to create a new CourseNode object.
  * Returns a pointer to the CourseNode object that is created
  */
-CourseNode* createNode(string input) {
+CourseNode* createNode(string input, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph) {
     stringstream stream(input);
     string courseCode;
     string name;
@@ -294,10 +232,12 @@ CourseNode* createNode(string input) {
     getline(stream, creditString, ',');
     creditString.erase(0,1);
     int credits = stoi(creditString);
+
+    // Now get the requirements to take this course from the stream input
     getline(stream, reqs, ']');
-    // Now delete the opening bracket '[' amd then traverse through this string, delimited by commas
+    // Now delete the opening bracket '[' and then traverse through this string, delimited by commas
     reqs.erase(0,2);
-    // Create a function for this that returns a vector. Can't make a function since the vectors hold different types
+
     stringstream reqStream(reqs);
     string course;
     int count = 0;
@@ -311,9 +251,9 @@ CourseNode* createNode(string input) {
         requirements.push_back(course);
     }
 
+    // Now get the quarters that offer this course from the stream input
     getline(stream, terms, ']');
     terms.erase(0,3);
-    // Create a function for this that returns a vector. Can't make a function since the vectors hold different types
     stringstream termStream(terms);
     string quarter;
     while (!termStream.eof()) {
@@ -321,15 +261,13 @@ CourseNode* createNode(string input) {
         int temp = stoi(quarter);
         quarters.push_back(temp);
     }
-
+    // Create the CourseNode and return it
     CourseNode* node = new CourseNode(courseCode, name, credits, requirements, quarters);
-    //cout << node->ToString() << endl;
-
     return node;
 }
 
 // Greedy algorithm that picks the classes based on their order of priority.
-set<int> pickClasses(set<int> s, int maxCredits, int year) {
+set<int> pickClasses(set<int> s, int maxCredits, int year, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph) {
     int creditsLeft = maxCredits;
     set<int> retSet; // Return Set
     while(true) {
@@ -339,22 +277,28 @@ set<int> pickClasses(set<int> s, int maxCredits, int year) {
         set<int>::iterator itr;
         for (itr = s.begin(); itr != s.end(); itr++) {
             // This stops CSC 3000 and CSC 4941 from being taken before they should be taken
-            if (data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 3000" && data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 4941") {
-                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+            if (data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 3000" &&
+            data[graph.nodeFromId(*itr)]->GetCourseCode() != "CSC 4941" &&
+            data[graph.nodeFromId(*itr)]->GetCourseCode() != "CHM 4899") {
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() >
+                data[graph.nodeFromId(bestCourse)]->GetPriority()) {
                     if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
                         bestCourse = *itr; // Setting bestCourse as class ID with the highest priority out of possible classes searched.
                     }
                 }
             } else if (year >= 3 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 3000") {
                 // This makes sure that CSC 3000 is only taken on the 3rd year or after
-                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() >
+                data[graph.nodeFromId(bestCourse)]->GetPriority()) {
                     if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
                         bestCourse = *itr;
                     }
                 }
-            } else if (year >= 4 && data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 4941") {
-                // This makes sure that CSC 4941 is only taken on the 4th year or after
-                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() > data[graph.nodeFromId(bestCourse)]->GetPriority()) {
+            } else if (year >= 4 && (data[graph.nodeFromId(*itr)]->GetCourseCode() == "CSC 4941" ||
+            data[graph.nodeFromId(*itr)]->GetCourseCode() == "CHM 4899")) {
+                // This makes sure that CSC 4941 or CHM 4899 is only taken on the 4th year or after
+                if (bestCourse == -1 || data[graph.nodeFromId(*itr)]->GetPriority() >
+                data[graph.nodeFromId(bestCourse)]->GetPriority()) {
                     if (data[graph.nodeFromId(*itr)]->GetCredits() <= creditsLeft) {
                         bestCourse = *itr;
                     }
@@ -371,7 +315,7 @@ set<int> pickClasses(set<int> s, int maxCredits, int year) {
 }
 
 // Recursive DFS that counts the priority of each node as it traverses back up the graph.
-void assignPriority(int id) {
+void assignPriority(int id, SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph) {
     SmartDigraph::Node node = graph.nodeFromId(id);
 
     // If the node's priority was already set using a previous call of assignPriority() on a different root node, don't traverse that path of classes again.
@@ -383,12 +327,11 @@ void assignPriority(int id) {
     // Call assignPriority() on every child node.
     int max = -1;
     for (SmartDigraph::OutArcIt a(graph, node); a != INVALID; ++a) {
-        SmartDigraph::Node target = graph.target(a);
-        assignPriority(graph.id(target)); // Recursive call
-
+        assignPriority(graph.id(graph.target(a)), data, graph);
+        
         // Picking the child node with the greatest priority, and basing the priority of the node entered off of that one.
-        if (data[target]->GetPriority() > max) {
-            max = data[target]->GetPriority();
+        if (data[graph.target(a)]->GetPriority() > max) {
+            max = data[graph.target(a)]->GetPriority();
         }
     }
 
@@ -457,7 +400,7 @@ void word(int x, int y, string s, int rgb[3]){
 
 void letter(int x, int y, char letter, int rgb[3]) {
     int letArr[5][3];
-    switch(int(letter)) {
+    switch (int(letter)) {
         case 32: // Space
         {
             int a[5][3] = {0, 0, 0,
@@ -658,6 +601,16 @@ void letter(int x, int y, char letter, int rgb[3]) {
             memcpy(letArr, i, sizeof(letArr));
             break;
         }
+        case 76: // Letter L
+        {
+            int i[5][3] = {1, 0, 0,
+                           1, 0, 0,
+                           1, 0, 0,
+                           1, 0, 0,
+                           1, 1, 1};
+            memcpy(letArr, i, sizeof(letArr));
+            break;
+        }
         case 77: // Letter M
         {
             int m[5][3] = {1, 0, 1,
@@ -768,4 +721,64 @@ void letter(int x, int y, char letter, int rgb[3]) {
             }
         }
     }
+}
+/* This function creates the output.txt file that contains all of the courses in the order that they
+ * should be taken. This output.txt file will be taken into python and run to create the display of the flowchart.
+ * This function takes in the graph along with the data NodeMap, the available classes set, the max credits per
+ * quarter, and the quarter that the user plans to start taking the classes in.
+ */
+void createOutput(SmartDigraph::NodeMap<CourseNode*>& data, SmartDigraph& graph, set<int> availableClasses[3], int maxCredits, int startQuarter) {
+    // Create a file with all of the ids for the courses along with their 
+
+
+    // File output to .txt file to be read and used in python to create a display of the classes
+    // Use ../output.txt in CLion, and output.txt for ubuntu
+    ofstream outputFile("output.txt");
+
+    int currentYear = 1;
+//    cout << "Year 1:" << endl;
+    int currentQuarter = startQuarter - 1;
+    while (!availableClasses[0].empty() || !availableClasses[1].empty() || !availableClasses[2].empty()) {
+        // Each time that the quarter is 3 (quarters are 0, 1, 2), another year has gone by
+        if (currentQuarter == 3) {
+            currentYear++;
+        }
+        currentQuarter = currentQuarter % 3;
+        set<int> s = pickClasses(availableClasses[currentQuarter], maxCredits, currentYear, data, graph);
+
+        outputFile << "Quarter " << currentQuarter + 1 << ":" << endl;
+
+        int c = -1;
+        for (auto itr = s.begin(); itr !=s.end(); itr++) {
+            c++;
+            // Just output the courseCodes and credits
+            outputFile << data[graph.nodeFromId(*itr)]->GetCourseCode() << ": " <<
+            data[graph.nodeFromId(*itr)]->GetCredits() << endl;
+
+            int rgb[3] = {100,100,100};
+            box(((currentYear - 1) * 190) + (currentQuarter * 60) + 10 + ((startQuarter - 1) * -50),(c * 71) + 10,40,15,rgb);
+
+            int rgb2[3] = {255,255,100};
+            string code = data[graph.nodeFromId(*itr)]->GetCourseCode();
+            char credits = char(data[graph.nodeFromId(*itr)]->GetCredits() + 48);
+            word(((currentYear - 1) * 190) + (currentQuarter * 60) + 13 + ((startQuarter - 1) * -50),(c * 71) + 12,code,rgb2);
+            letter(((currentYear - 1) * 190) + (currentQuarter * 60) + 13 + ((startQuarter - 1) * -50),(c * 71) + 18,credits,rgb2);
+
+            availableClasses[0].erase(*itr);
+            availableClasses[1].erase(*itr);
+            availableClasses[2].erase(*itr);
+            for (SmartDigraph::OutArcIt a(graph, graph.nodeFromId(*itr)); a != INVALID; ++a) {
+                vector<int> v = data[graph.target(a)]->GetQuarters();
+                for (int j = 0; j < v.size(); j++) {
+                    availableClasses[v[j] - 1].insert(graph.id(graph.target(a)));
+                }
+            }
+        }
+
+        currentQuarter++;
+    }
+
+    // Add the edges to the file
+
+    outputFile.close();
 }
