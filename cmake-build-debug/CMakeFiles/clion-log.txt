@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=C:/Development/GitHub/flowchart-the-fellowship/lemon-1.3.1/lemon -G "CodeBlocks - Unix Makefiles" /mnt/c/Development/GitHub/flowchart-the-fellowship
--- Configuring done
--- Generating done
--- Build files have been written to: /mnt/c/Development/GitHub/flowchart-the-fellowship/cmake-build-debug
-=======
-Cannot generate into C:\Development\GitHub\flowchart-the-fellowship
+Cannot generate into C:\Development\GitHub\Courseflow-Flowchart-Generator
 It is already used for project C:\Users\Matth\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs\home\fiskm\Development\GitHub\flowchart-the-fellowship
 
 Please either delete it manually or select another generation directory
->>>>>>> Mark's-Work
